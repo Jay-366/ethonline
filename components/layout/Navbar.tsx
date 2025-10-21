@@ -7,6 +7,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const navItems = [
+    { href: '/', label: 'Home' },
     { href: '/chat', label: 'Chat' },
     { href: '/marketplace', label: 'Marketplace' },
     { href: '/agents', label: 'My Agents' },
@@ -26,7 +27,6 @@ export default function Navbar() {
         <div className="flex items-center space-x-12">
           {navItems.map((item) => {
             const isActive = pathname === item.href || 
-              (item.href === '/chat' && pathname === '/') ||
               (item.href === '/agents' && pathname.startsWith('/agents/'));
             
             return (
