@@ -1,16 +1,31 @@
 'use client';
  
-import { getUnifiedBalances, isInitialized } from '../../lib/nexus';
+import { useNexus } from '@/components/nexus/NexusProvider';
  
 export default function FetchUnifiedBalanceButton({
   className,
   onResult,
 }: { className?: string; onResult?: (r: any) => void }) {
+  const { nexusSDK, fetchUnifiedBalance, unifiedBalance, loading } = useNexus();
+  
   const onClick = async () => {
-    if (!isInitialized()) return alert('Initialize first');
-    const res = await getUnifiedBalances();
-    onResult?.(res);
-    console.log(res);
+    if (!nexusSDK) return alert('Initialize first');
+    try {
+      await fetchUnifiedBalance();
+      onResult?.(unifiedBalance);
+      console.log('Unified balances:', unifiedBalance);
+    } catch (e: any) {
+      alert(e?.message ?? 'Failed to fetch balances');
+    }
   };
-  return <button className={className} onClick={onClick} disabled={!isInitialized()}>Fetch Unified Balances</button>;
+  
+  return (
+    <button 
+      className={className} 
+      onClick={onClick} 
+      disabled={loading || !nexusSDK}
+    >
+      {loading ? 'Fetching...' : 'Fetch Unified Balances'}
+    </button>
+  );
 }

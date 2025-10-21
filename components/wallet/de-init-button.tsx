@@ -1,15 +1,30 @@
 'use client';
  
-import { deinit, isInitialized } from '../../lib/nexus';
+import { useNexus } from '@/components/nexus/NexusProvider';
  
 export default function DeinitButton({
   className,
   onDone,
 }: { className?: string; onDone?: () => void }) {
+  const { nexusSDK, deinitializeNexus, loading } = useNexus();
+  
   const onClick = async () => {
-    await deinit();
-    onDone?.();
-    alert('Nexus de-initialized');
+    try {
+      await deinitializeNexus();
+      onDone?.();
+      alert('Nexus de-initialized');
+    } catch (e: any) {
+      alert(e?.message ?? 'De-init failed');
+    }
   };
-  return <button className={className} onClick={onClick} disabled={!isInitialized()}>De-initialize</button>;
+  
+  return (
+    <button 
+      className={className} 
+      onClick={onClick} 
+      disabled={loading || !nexusSDK}
+    >
+      {loading ? 'De-initializing...' : 'De-initialize'}
+    </button>
+  );
 }

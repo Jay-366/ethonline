@@ -1,8 +1,11 @@
+// Global polyfills must run before any component code executes
+import '@/lib/global-polyfills';
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.css";
 import Navbar from "@/components/layout/Navbar";
-import { Providers } from "@/components/providers";  
+import { Providers } from "@/components/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

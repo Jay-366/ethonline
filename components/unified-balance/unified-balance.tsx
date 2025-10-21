@@ -1,6 +1,8 @@
 "use client";
+
 import * as React from "react";
-import { useNexus } from "../nexus/NexusProvider";
+import { useOptionalNexus } from "../nexus/NexusProvider";
+import { useOptionalSimpleNexus } from "../nexus/SimpleNexusProvider";
 import { Label } from "../ui/label";
 import { DollarSign } from "lucide-react";
 import {
@@ -12,7 +14,30 @@ import {
 import { Separator } from "../ui/separator";
 
 const UnifiedBalance: React.FC = () => {
-  const { unifiedBalance } = useNexus();
+  const simpleContext = useOptionalSimpleNexus();
+  const nexusContext = useOptionalNexus();
+  const context = simpleContext ?? nexusContext;
+  const unifiedBalance = context?.unifiedBalance ?? null;
+  const loading = context?.loading ?? false;
+  const fetchUnifiedBalance = context?.fetchUnifiedBalance;
+
+  React.useEffect(() => {
+    if (!context || unifiedBalance || !fetchUnifiedBalance) {
+      return;
+    }
+
+    let cancelled = false;
+
+    fetchUnifiedBalance().catch((error) => {
+      if (!cancelled) {
+        console.error("Failed to fetch unified balances:", error);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [context, fetchUnifiedBalance, unifiedBalance]);
 
   const formatBalance = React.useCallback(
     (balance: string, decimals: number) => {
@@ -24,10 +49,18 @@ const UnifiedBalance: React.FC = () => {
 
   const totalFiat = React.useMemo(() => {
     if (!unifiedBalance) return "0.00";
+
     const total = unifiedBalance.reduce(
-      (acc, fiat) => acc + fiat.balanceInFiat,
+      (acc, asset) => {
+        const fiatValue =
+          typeof asset.balanceInFiat === "number"
+            ? asset.balanceInFiat
+            : parseFloat(String(asset.balanceInFiat ?? 0));
+        return acc + (Number.isFinite(fiatValue) ? fiatValue : 0);
+      },
       0
     );
+
     return total.toFixed(2);
   }, [unifiedBalance]);
 
@@ -36,6 +69,22 @@ const UnifiedBalance: React.FC = () => {
       (token) => parseFloat(token.balance) > 0
     );
   }, [unifiedBalance]);
+
+  if (!context) {
+    return (
+      <div className="w-full max-w-lg mx-auto p-4 rounded-lg border border-border text-sm text-muted-foreground">
+        Connect your wallet to view unified balances.
+      </div>
+    );
+  }
+
+  if (loading && !unifiedBalance) {
+    return (
+      <div className="w-full max-w-lg mx-auto p-4 rounded-lg border border-border text-sm text-muted-foreground">
+        Loading unified balances...
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-lg mx-auto p-4 flex flex-col gap-y-2 items-center overflow-y-scroll max-h-[372px] rounded-lg border border-border">

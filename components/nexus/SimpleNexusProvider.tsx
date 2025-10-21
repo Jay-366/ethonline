@@ -16,12 +16,11 @@ import {
   useState,
 } from "react";
 
-interface NexusContextType {
+interface SimpleNexusContextType {
   nexusSDK: NexusSDK | null;
   unifiedBalance: UserAsset[] | null;
   initializeNexus: (provider: EthereumProvider) => Promise<void>;
   deinitializeNexus: () => Promise<void>;
-  attachEventHooks: () => void;
   intent: OnIntentHookData | null;
   setIntent: React.Dispatch<React.SetStateAction<OnIntentHookData | null>>;
   allowance: OnAllowanceHookData | null;
@@ -35,8 +34,9 @@ interface NexusContextType {
   fetchUnifiedBalance: () => Promise<void>;
 }
 
-export const NexusContext = createContext<NexusContextType | undefined>(undefined);
-const NexusProvider = ({
+export const SimpleNexusContext = createContext<SimpleNexusContextType | undefined>(undefined);
+
+const SimpleNexusProvider = ({
   children,
   config = {
     network: "mainnet",
@@ -49,7 +49,6 @@ const NexusProvider = ({
     debug?: boolean;
   };
 }) => {
-  const sdk = useMemo(() => new NexusSDK(config), [config]);
   const [nexusSDK, setNexusSDK] = useState<NexusSDK | null>(null);
   const [supportedChainsAndTokens, setSupportedChainsAndTokens] =
     useState<SupportedChainsResult | null>(null);
@@ -63,15 +62,11 @@ const NexusProvider = ({
   const initializeNexus = async (provider: EthereumProvider) => {
     setLoading(true);
     try {
-      if (sdk.isInitialized()) throw new Error("Nexus is already initialized");
+      console.log('Initializing Nexus SDK...');
+      const sdk = new NexusSDK(config);
       await sdk.initialize(provider);
       setNexusSDK(sdk);
-      const unifiedBalance = await sdk?.getUnifiedBalances();
-      setUnifiedBalance(unifiedBalance);
-      const supportedChainsAndTokens = sdk?.utils?.getSupportedChains(
-        config?.network === "testnet" ? 0 : undefined,
-      );
-      setSupportedChainsAndTokens(supportedChainsAndTokens);
+      console.log('Nexus SDK initialized successfully');
     } catch (error) {
       console.error("Error initializing Nexus:", error);
     } finally {
@@ -81,40 +76,32 @@ const NexusProvider = ({
 
   const deinitializeNexus = async () => {
     try {
-      if (!sdk.isInitialized()) throw new Error("Nexus is not initialized");
-      await sdk.deinit();
-      setNexusSDK(null);
+      if (nexusSDK) {
+        await nexusSDK.deinit();
+        setNexusSDK(null);
+      }
     } catch (error) {
       console.error("Error deinitializing Nexus:", error);
     }
   };
 
-  const attachEventHooks = () => {
-    sdk.setOnAllowanceHook((data: OnAllowanceHookData) => {
-      setAllowance(data);
-    });
-
-    sdk.setOnIntentHook((data) => {
-      setIntent(data);
-    });
-  };
-
   const handleInit = useCallback(
     async (provider: EthereumProvider) => {
-      if (sdk.isInitialized()) {
+      if (nexusSDK) {
         console.log("Nexus already initialized");
         return;
       }
       await initializeNexus(provider);
-      attachEventHooks();
     },
-    [sdk],
+    [nexusSDK],
   );
 
   const fetchUnifiedBalance = async () => {
     try {
-      const unifiedBalance = await sdk?.getUnifiedBalances();
-      setUnifiedBalance(unifiedBalance);
+      if (nexusSDK) {
+        const unifiedBalance = await nexusSDK.getUnifiedBalances();
+        setUnifiedBalance(unifiedBalance);
+      }
     } catch (error) {
       console.error("Error fetching unified balance:", error);
     }
@@ -125,7 +112,6 @@ const NexusProvider = ({
       nexusSDK,
       initializeNexus,
       deinitializeNexus,
-      attachEventHooks,
       intent,
       setIntent,
       allowance,
@@ -141,7 +127,6 @@ const NexusProvider = ({
       nexusSDK,
       initializeNexus,
       deinitializeNexus,
-      attachEventHooks,
       intent,
       setIntent,
       allowance,
@@ -155,20 +140,20 @@ const NexusProvider = ({
     ],
   );
   return (
-    <NexusContext.Provider value={value}>{children}</NexusContext.Provider>
+    <SimpleNexusContext.Provider value={value}>{children}</SimpleNexusContext.Provider>
   );
 };
 
-export function useNexus() {
-  const context = useContext(NexusContext);
+export function useSimpleNexus() {
+  const context = useContext(SimpleNexusContext);
   if (!context) {
-    throw new Error("useNexus must be used within a NexusProvider");
+    throw new Error("useSimpleNexus must be used within a SimpleNexusProvider");
   }
   return context;
 }
 
-export function useOptionalNexus() {
-  return useContext(NexusContext);
+export function useOptionalSimpleNexus() {
+  return useContext(SimpleNexusContext);
 }
 
-export default NexusProvider;
+export default SimpleNexusProvider;
