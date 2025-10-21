@@ -191,3 +191,64 @@
 html {
   font-size: var(--font-size);
 }
+
+/* Wallet button styles to match navbar design */
+.wallet-button {
+  background: transparent;
+  border: 1px solid rgba(80, 96, 108, 0.4);
+  color: rgba(251, 237, 224, 0.7);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.wallet-button:hover {
+  color: #FBede0;
+  border-color: rgba(251, 237, 224, 0.3);
+  background: rgba(251, 237, 224, 0.05);
+}
+
+.wallet-button:active {
+  transform: translateY(1px);
+}
+
+/* RainbowKit modal customization */
+[data-rk] {
+  --rk-fonts-body: var(--font-geist-sans);
+  --rk-fonts-heading: var(--font-geist-sans);
+  --rk-colors-accentColor: #FBede0;
+  --rk-colors-accentColorForeground: #161823;
+  --rk-colors-actionButtonBorder: rgba(80, 96, 108, 0.4);
+  --rk-colors-actionButtonBorderMobile: rgba(80, 96, 108, 0.4);
+  --rk-colors-actionButtonSecondaryBackground: #1C1F2B;
+  --rk-colors-closeButton: rgba(251, 237, 224, 0.7);
+  --rk-colors-closeButtonBackground: transparent;
+  --rk-colors-connectButtonBackground: #1C1F2B;
+  --rk-colors-connectButtonBackgroundError: #d4183d;
+  --rk-colors-connectButtonBorder: rgba(80, 96, 108, 0.4);
+  --rk-colors-connectButtonInnerBackground: transparent;
+  --rk-colors-connectButtonText: #FBede0;
+  --rk-colors-connectButtonTextError: #ffffff;
+  --rk-colors-connectionIndicator: #FBede0;
+  --rk-colors-error: #d4183d;
+  --rk-colors-generalBorder: rgba(80, 96, 108, 0.4);
+  --rk-colors-generalBorderDim: rgba(80, 96, 108, 0.2);
+  --rk-colors-menuItemBackground: transparent;
+  --rk-colors-menuItemBackgroundHover: rgba(251, 237, 224, 0.05);
+  --rk-colors-menuItemText: rgba(251, 237, 224, 0.7);
+  --rk-colors-menuItemTextHover: #FBede0;
+  --rk-colors-modalBackdrop: rgba(22, 24, 35, 0.8);
+  --rk-colors-modalBackground: #1C1F2B;
+  --rk-colors-modalBorder: rgba(80, 96, 108, 0.4);
+  --rk-colors-modalText: #FBede0;
+  --rk-colors-modalTextDim: rgba(251, 237, 224, 0.6);
+  --rk-colors-modalTextSecondary: rgba(251, 237, 224, 0.7);
+  --rk-colors-profileAction: rgba(251, 237, 224, 0.7);
+  --rk-colors-profileActionHover: rgba(251, 237, 224, 0.05);
+  --rk-colors-profileForeground: rgba(251, 237, 224, 0.6);
+  --rk-colors-selectedOptionBorder: #FBede0;
+  --rk-colors-standby: rgba(251, 237, 224, 0.6);
+}

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import ConnectWalletButton from '@/components/wallet/connect-button';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -22,7 +23,7 @@ export default function Navbar() {
         borderColor: 'rgba(80, 96, 108, 0.4)',
       }}
     >
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-between">
         <div className="flex items-center space-x-12">
           {navItems.map((item) => {
             const isActive = pathname === item.href || 
@@ -61,6 +62,9 @@ export default function Navbar() {
               </Link>
             );
           })}
+        </div>
+        <div className="flex items-center">
+          <ConnectWalletButton className="wallet-button" />
         </div>
       </div>
     </nav>
