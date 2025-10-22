@@ -34,6 +34,7 @@ export default function AgentDetailsPage() {
   };
 
   return (
+    <div className="min-h-screen" style={{ backgroundColor: '#161823' }}>
     <div className="max-w-[1440px] mx-auto px-8 py-8">
       {/* Back Button */}
       <Link
@@ -269,6 +270,7 @@ export default function AgentDetailsPage() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

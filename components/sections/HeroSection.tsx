@@ -105,7 +105,7 @@ export default function HeroSection() {
             </h1>
           </div>
           <p className="text-xl lg:text-2xl mb-6 max-w-3xl mx-auto" style={{ color: 'rgba(251, 237, 224, 0.8)' }}>
-            Discover, create, and trade intelligent AI agents. Build the future of autonomous collaboration.
+            Discover, create, and trade intelligent AI agents on INTELLITRADE — building the future of autonomous collaboration.
           </p>
         </div>
         

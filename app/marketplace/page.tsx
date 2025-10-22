@@ -134,7 +134,8 @@ export default function MarketplacePage() {
   };
 
   return (
-    <div className="max-w-[1440px] mx-auto px-8 py-8">
+    <div className="min-h-screen" style={{ backgroundColor: '#161823' }}>
+      <div className="max-w-[1440px] mx-auto px-8 py-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="mb-2" style={{ color: '#FBede0', fontSize: '36px' }}>
@@ -344,6 +345,7 @@ export default function MarketplacePage() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
