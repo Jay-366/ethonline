@@ -35,6 +35,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${unbounded.variable} antialiased`}
         style={{ backgroundColor: '#161823' }}
+        suppressHydrationWarning
       >
         <Navbar />
         <SmoothScrollWrapper>

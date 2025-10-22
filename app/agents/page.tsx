@@ -3,6 +3,7 @@
 import { Star, TrendingUp, Users, MessageSquare, Plus } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
+import PricingCard from '@/components/cards/PricingCard';
 
 export default function MyAgentsPage() {
   const [activeTab, setActiveTab] = useState<'subscribed' | 'created'>('subscribed');
@@ -140,105 +141,18 @@ export default function MyAgentsPage() {
 
           <div className="grid grid-cols-3 gap-6">
             {subscribedAgents.map((agent) => (
-              <div
+              <PricingCard
                 key={agent.id}
-                onClick={() => handleAgentSelect(agent)}
-                className="rounded-3xl p-6 cursor-pointer transition-all duration-200"
-                style={{
-                  backgroundColor: '#1C1F2B',
-                  border: '1px solid rgba(80, 96, 108, 0.4)',
-                  boxShadow: '0 0 10px rgba(251, 237, 224, 0.1)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)';
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(251, 237, 224, 0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 0 10px rgba(251, 237, 224, 0.1)';
-                }}
-              >
-                {/* Trending Badge */}
-                {agent.trending && (
-                  <div className="flex justify-end mb-4">
-                    <div
-                      className="px-3 py-1 rounded-lg flex items-center gap-1"
-                      style={{
-                        backgroundColor: 'rgba(80, 96, 108, 0.5)',
-                        color: '#FBede0',
-                      }}
-                    >
-                      <TrendingUp className="w-3 h-3" />
-                      <span className="text-xs">Trending</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Agent Info */}
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 style={{ color: '#FBede0', fontSize: '20px' }}>
-                      {agent.name}
-                    </h3>
-                    <span
-                      className="px-3 py-1 rounded-lg text-sm"
-                      style={{
-                        backgroundColor: '#50606C',
-                        color: '#FBede0',
-                      }}
-                    >
-                      {agent.category}
-                    </span>
-                  </div>
-                  <p className="text-sm mb-4" style={{ color: 'rgba(251, 237, 224, 0.7)' }}>
-                    {agent.description}
-                  </p>
-                </div>
-
-                {/* Stats */}
-                <div className="flex items-center gap-4 mb-4 pb-4 border-b" style={{ borderColor: 'rgba(80, 96, 108, 0.4)' }}>
-                  <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4" style={{ color: '#FBede0', fill: '#FBede0' }} />
-                    <span className="text-sm" style={{ color: '#FBede0' }}>
-                      {agent.rating}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Users className="w-4 h-4" style={{ color: '#FBede0' }} />
-                    <span className="text-sm" style={{ color: '#FBede0' }}>
-                      {agent.users.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Price */}
-                <div className="flex items-center justify-between">
-                  <span style={{ color: '#FBede0', fontSize: '18px' }}>
-                    {agent.price}
-                  </span>
-                  <button
-                    className="px-4 py-2 rounded-xl text-sm transition-all duration-200"
-                    style={{
-                      backgroundColor: '#50606C',
-                      color: '#FBede0',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#FBede0';
-                      e.currentTarget.style.color = '#161823';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#50606C';
-                      e.currentTarget.style.color = '#FBede0';
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAgentSelect(agent);
-                    }}
-                  >
-                    View Details
-                  </button>
-                </div>
-              </div>
+                title={agent.name}
+                description={agent.description}
+                price={agent.price}
+                category={agent.category}
+                rating={agent.rating}
+                users={agent.users}
+                trending={agent.trending}
+                badge={agent.category}
+                onViewDetails={() => handleAgentSelect(agent)}
+              />
             ))}
           </div>
         </div>
@@ -282,148 +196,22 @@ export default function MyAgentsPage() {
 
           <div className="grid grid-cols-3 gap-6">
             {createdAgents.map((agent) => (
-              <div
+              <PricingCard
                 key={agent.id}
-                onClick={() => handleAgentSelect(agent)}
-                className="rounded-3xl p-6 cursor-pointer transition-all duration-200"
-                style={{
-                  backgroundColor: '#1C1F2B',
-                  border: '1px solid rgba(80, 96, 108, 0.4)',
-                  boxShadow: '0 0 10px rgba(251, 237, 224, 0.1)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)';
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(251, 237, 224, 0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 0 10px rgba(251, 237, 224, 0.1)';
-                }}
-              >
-                {/* Trending Badge */}
-                {agent.trending && (
-                  <div className="flex justify-end mb-4">
-                    <div
-                      className="px-3 py-1 rounded-lg flex items-center gap-1"
-                      style={{
-                        backgroundColor: 'rgba(80, 96, 108, 0.5)',
-                        color: '#FBede0',
-                      }}
-                    >
-                      <TrendingUp className="w-3 h-3" />
-                      <span className="text-xs">Trending</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Agent Info */}
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 style={{ color: '#FBede0', fontSize: '20px' }}>
-                      {agent.name}
-                    </h3>
-                    <span
-                      className="px-3 py-1 rounded-lg text-sm"
-                      style={{
-                        backgroundColor: agent.status === 'Active' ? '#50606C' : '#161823',
-                        color: agent.status === 'Active' ? '#FBede0' : 'rgba(251, 237, 224, 0.6)',
-                      }}
-                    >
-                      {agent.status}
-                    </span>
-                  </div>
-                  <div className="mb-2">
-                    <span
-                      className="px-2 py-1 rounded text-xs"
-                      style={{
-                        backgroundColor: '#161823',
-                        color: '#FBede0',
-                      }}
-                    >
-                      {agent.category}
-                    </span>
-                  </div>
-                  <p className="text-sm mb-4" style={{ color: 'rgba(251, 237, 224, 0.7)' }}>
-                    {agent.description}
-                  </p>
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-3 mb-4 pb-4 border-b" style={{ borderColor: 'rgba(80, 96, 108, 0.4)' }}>
-                  <div>
-                    <div className="flex items-center gap-1 mb-1">
-                      <Star className="w-3 h-3" style={{ color: '#FBede0', fill: '#FBede0' }} />
-                      <span className="text-xs" style={{ color: 'rgba(251, 237, 224, 0.6)' }}>
-                        Rating
-                      </span>
-                    </div>
-                    <div style={{ color: '#FBede0' }}>{agent.rating}</div>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-1 mb-1">
-                      <Users className="w-3 h-3" style={{ color: '#FBede0' }} />
-                      <span className="text-xs" style={{ color: 'rgba(251, 237, 224, 0.6)' }}>
-                        Users
-                      </span>
-                    </div>
-                    <div style={{ color: '#FBede0' }}>{agent.users}</div>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-1 mb-1">
-                      <TrendingUp className="w-3 h-3" style={{ color: '#FBede0' }} />
-                      <span className="text-xs" style={{ color: 'rgba(251, 237, 224, 0.6)' }}>
-                        Revenue
-                      </span>
-                    </div>
-                    <div style={{ color: '#FBede0' }}>{agent.revenue}</div>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-2">
-                  <button
-                    className="flex-1 px-4 py-2 rounded-xl text-sm transition-all duration-200"
-                    style={{
-                      backgroundColor: '#50606C',
-                      color: '#FBede0',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#FBede0';
-                      e.currentTarget.style.color = '#161823';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#50606C';
-                      e.currentTarget.style.color = '#FBede0';
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAgentSelect(agent);
-                    }}
-                  >
-                    View Details
-                  </button>
-                  <button
-                    className="flex-1 px-4 py-2 rounded-xl text-sm transition-all duration-200"
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: '1px solid rgba(80, 96, 108, 0.4)',
-                      color: '#FBede0',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#161823';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // Handle edit action
-                    }}
-                  >
-                    Edit
-                  </button>
-                </div>
-              </div>
+                title={agent.name}
+                description={agent.description}
+                price={agent.revenue}
+                category={agent.category}
+                status={agent.status}
+                rating={agent.rating}
+                users={agent.users}
+                revenue={agent.revenue}
+                trending={agent.trending}
+                isCreated={true}
+                badge={agent.status}
+                onViewDetails={() => handleAgentSelect(agent)}
+                onEdit={() => console.log('Edit agent:', agent.id)}
+              />
             ))}
           </div>
 
