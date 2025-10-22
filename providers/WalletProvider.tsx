@@ -10,6 +10,7 @@ import {
 import { WagmiProvider } from "wagmi";
 import { sepolia, baseSepolia, arbitrumSepolia, monadTestnet, polygonAmoy, optimismSepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import NexusProvider from "@/components/nexus/NexusProvider";
 
 const config = getDefaultConfig({
   appName: "Nexus Demo",
@@ -24,7 +25,9 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => (
   <WagmiProvider config={config}>
     <QueryClientProvider client={queryClient}>
       <RainbowKitProvider theme={darkTheme()}>
-        {children}
+        <NexusProvider>
+          {children}
+        </NexusProvider>
       </RainbowKitProvider>
     </QueryClientProvider>
   </WagmiProvider>
