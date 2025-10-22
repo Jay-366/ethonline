@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
       https: 'https-browserify',
       os: 'os-browserify/browser',
       url: 'url',
+      ws: 'ws/browser',
     },
   },
   // Fallback webpack config for non-Turbopack builds
@@ -31,6 +32,7 @@ const nextConfig: NextConfig = {
         https: require.resolve('https-browserify'),
         os: require.resolve('os-browserify/browser'),
         url: require.resolve('url'),
+        ws: require.resolve('ws/browser'),
         fs: false,
         net: false,
         tls: false,

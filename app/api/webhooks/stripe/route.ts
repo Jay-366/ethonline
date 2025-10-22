@@ -6,3 +6,9 @@ export async function POST(request: NextRequest) {
   console.log('Stripe webhook received:', body);
   return NextResponse.json({ message: 'Webhook processed' });
 }
+
+
+
+
+
+

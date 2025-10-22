@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { useOptionalNexus } from "../nexus/NexusProvider";
-import { useOptionalSimpleNexus } from "../nexus/SimpleNexusProvider";
 import { Label } from "../ui/label";
 import { DollarSign } from "lucide-react";
 import {
@@ -14,9 +13,7 @@ import {
 import { Separator } from "../ui/separator";
 
 const UnifiedBalance: React.FC = () => {
-  const simpleContext = useOptionalSimpleNexus();
-  const nexusContext = useOptionalNexus();
-  const context = simpleContext ?? nexusContext;
+  const context = useOptionalNexus();
   const unifiedBalance = context?.unifiedBalance ?? null;
   const loading = context?.loading ?? false;
   const fetchUnifiedBalance = context?.fetchUnifiedBalance;
@@ -72,31 +69,50 @@ const UnifiedBalance: React.FC = () => {
 
   if (!context) {
     return (
-      <div className="w-full max-w-lg mx-auto p-4 rounded-lg border border-border text-sm text-muted-foreground">
-        Connect your wallet to view unified balances.
+      <div className="w-full max-w-lg mx-auto p-6 rounded-lg border border-border bg-gradient-to-br from-card/50 to-card/30 text-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="p-3 rounded-full bg-muted/30">
+            <DollarSign className="w-6 h-6 text-muted-foreground" />
+          </div>
+          <p className="text-sm font-medium text-muted-foreground">
+            Connect your wallet to view unified balances
+          </p>
+        </div>
       </div>
     );
   }
 
   if (loading && !unifiedBalance) {
     return (
-      <div className="w-full max-w-lg mx-auto p-4 rounded-lg border border-border text-sm text-muted-foreground">
-        Loading unified balances...
+      <div className="w-full max-w-lg mx-auto p-6 rounded-lg border border-border bg-gradient-to-br from-card/50 to-card/30 text-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="p-3 rounded-full bg-primary/20 animate-pulse">
+            <DollarSign className="w-6 h-6 text-primary" />
+          </div>
+          <p className="text-sm font-medium text-muted-foreground">
+            Loading unified balances...
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-lg mx-auto p-4 flex flex-col gap-y-2 items-center overflow-y-scroll max-h-[372px] rounded-lg border border-border">
-      <div className="flex items-center justify-start w-full">
-        <Label className="font-semibold text-muted-foreground">
-          Total Balance:
-        </Label>
-
-        <Label className="text-lg font-bold gap-x-0">
-          <DollarSign className="w-4 h-4 font-bold" strokeWidth={3} />
-          {totalFiat}
-        </Label>
+    <div className="w-full max-w-lg mx-auto p-6 flex flex-col gap-y-4 items-center overflow-y-scroll max-h-[400px] rounded-lg border border-border bg-gradient-to-br from-card/50 to-card/30">
+      <div className="flex items-center justify-between w-full p-4 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-full bg-primary/20">
+            <DollarSign className="w-5 h-5 text-primary" strokeWidth={2.5} />
+          </div>
+          <div>
+            <Label className="text-sm font-medium text-muted-foreground">
+              Total Balance
+            </Label>
+            <Label className="text-2xl font-bold text-foreground block">
+              ${totalFiat}
+            </Label>
+          </div>
+        </div>
       </div>
       <Accordion type="single" collapsible className="w-full space-y-4">
         {tokens.map((token) => {
@@ -110,20 +126,20 @@ const UnifiedBalance: React.FC = () => {
             <AccordionItem
               key={token.symbol}
               value={token.symbol}
-              className="px-4"
+              className="px-0"
             >
               <AccordionTrigger
-                className="hover:no-underline cursor-pointer items-center"
+                className="hover:no-underline cursor-pointer items-center p-4 rounded-lg hover:bg-accent/5 transition-colors duration-200"
                 hideChevron={false}
               >
                 <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-3">
-                    <div className="relative h-8 w-8">
+                  <div className="flex items-center gap-4">
+                    <div className="relative h-10 w-10 p-1 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/30">
                       {token.icon && (
                         <img
                           src={token.icon}
                           alt={token.symbol}
-                          className="rounded-full"
+                          className="rounded-full w-full h-full object-cover"
                           loading="lazy"
                           decoding="async"
                           width="32"
@@ -132,18 +148,18 @@ const UnifiedBalance: React.FC = () => {
                       )}
                     </div>
                     <div className="text-left">
-                      <h3 className="font-semibold">{token.symbol}</h3>
-                      <p className="text-sm text-muted-foreground">
+                      <h3 className="font-semibold text-foreground text-base">{token.symbol}</h3>
+                      <p className="text-sm text-muted-foreground font-medium">
                         {chainsLabel}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex flex-col items-end">
-                      <p className="text-base font-medium">
+                      <p className="text-lg font-bold text-foreground">
                         {formatBalance(token.balance, 6)}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm font-semibold text-primary">
                         ${token.balanceInFiat.toFixed(2)}
                       </p>
                     </div>
@@ -151,36 +167,36 @@ const UnifiedBalance: React.FC = () => {
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <div className="space-y-3 py-2">
+                <div className="space-y-2 py-2 px-2">
                   {positiveBreakdown.map((chain, index) => (
                     <React.Fragment key={chain.chain.id}>
-                      <div className="flex items-center justify-between px-2 py-1 rounded-md">
-                        <div className="flex items-center gap-2">
-                          <div className="relative h-6 w-6">
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors duration-200">
+                        <div className="flex items-center gap-3">
+                          <div className="relative h-8 w-8 p-0.5 rounded-full bg-gradient-to-br from-accent/20 to-primary/20 border border-accent/30">
                             <img
                               src={chain?.chain?.logo}
                               alt={chain.chain.name}
                               sizes="100%"
-                              className="rounded-full"
+                              className="rounded-full w-full h-full object-cover"
                               loading="lazy"
                               decoding="async"
                               width="24"
                               height="24"
                             />
                           </div>
-                          <span className="text-sm">{chain.chain.name}</span>
+                          <span className="text-sm font-medium text-foreground">{chain.chain.name}</span>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-medium">
+                          <p className="text-sm font-bold text-foreground">
                             {formatBalance(chain.balance, chain.decimals)}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs font-semibold text-primary">
                             ${chain.balanceInFiat.toFixed(2)}
                           </p>
                         </div>
                       </div>
                       {index < positiveBreakdown.length - 1 && (
-                        <Separator className="my-2" />
+                        <Separator className="my-1 bg-border/50" />
                       )}
                     </React.Fragment>
                   ))}

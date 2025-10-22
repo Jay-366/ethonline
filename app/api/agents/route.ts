@@ -10,3 +10,9 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   return NextResponse.json({ message: 'Agent created', agent: body });
 }
+
+
+
+
+
+

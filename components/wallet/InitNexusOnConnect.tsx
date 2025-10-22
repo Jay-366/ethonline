@@ -3,11 +3,11 @@
 import { useEffect } from "react";
 import { useAccount } from "wagmi";
 import { EthereumProvider } from "@avail-project/nexus-core";
-import { useSimpleNexus } from "@/components/nexus/SimpleNexusProvider";
+import { useNexus } from "@/components/nexus/NexusProvider";
 
 const InitNexusOnConnect = () => {
   const { status, connector } = useAccount();
-  const { handleInit } = useSimpleNexus();
+  const { handleInit } = useNexus();
 
   useEffect(() => {
     if (status !== "connected") {

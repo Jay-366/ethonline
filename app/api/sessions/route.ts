@@ -5,3 +5,9 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   return NextResponse.json({ message: 'Session started', session: body });
 }
+
+
+
+
+
+

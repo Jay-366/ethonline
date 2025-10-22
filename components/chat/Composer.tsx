@@ -35,3 +35,9 @@ export default function Composer({ onSendMessage }: ComposerProps) {
     </form>
   );
 }
+
+
+
+
+
+

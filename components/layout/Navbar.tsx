@@ -4,23 +4,22 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import ConnectWalletButton from '@/components/wallet/connect-button';
-import { useOptionalSimpleNexus } from '@/components/nexus/SimpleNexusProvider';
+import { useOptionalNexus } from '@/components/nexus/NexusProvider';
 import UnifiedBalance from '@/components/unified-balance/unified-balance';
 
 export default function Navbar() {
   const pathname = usePathname();
-  const nexus = useOptionalSimpleNexus();
-  const [isFetchingBalance, setIsFetchingBalance] = useState(false);
+  const nexus = useOptionalNexus();
 
   const nexusSDK = nexus?.nexusSDK ?? null;
   const unifiedBalance = nexus?.unifiedBalance ?? null;
   const fetchUnifiedBalance = nexus?.fetchUnifiedBalance;
   const isLoading = nexus?.loading ?? false;
+  const [isFetchingBalance, setIsFetchingBalance] = useState(false);
   const [isBalanceOpen, setIsBalanceOpen] = useState(false);
   const balanceContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!isBalanceOpen) return;
     if (!nexusSDK || !fetchUnifiedBalance) return;
     if (unifiedBalance) return;
     if (isFetchingBalance) return;
@@ -41,7 +40,7 @@ export default function Navbar() {
     return () => {
       cancelled = true;
     };
-  }, [fetchUnifiedBalance, nexusSDK, unifiedBalance, isFetchingBalance, isBalanceOpen]);
+  }, [nexusSDK, unifiedBalance, fetchUnifiedBalance, isFetchingBalance]);
 
   useEffect(() => {
     if (!isBalanceOpen) return;
@@ -69,7 +68,9 @@ export default function Navbar() {
     if (!unifiedBalance) return null;
 
     const total = unifiedBalance.reduce((sum, asset) => {
-      const fiat = typeof asset.balanceInFiat === 'number' ? asset.balanceInFiat : Number(asset.balanceInFiat ?? 0);
+      const fiat = typeof asset.balanceInFiat === 'number'
+        ? asset.balanceInFiat
+        : Number(asset.balanceInFiat ?? 0);
       return sum + (Number.isFinite(fiat) ? fiat : 0);
     }, 0);
 
@@ -77,7 +78,7 @@ export default function Navbar() {
   }, [unifiedBalance]);
 
   const shouldShowBalance = Boolean(nexusSDK);
-  const balanceDisplay = totalBalance ?? ((isFetchingBalance || isLoading) ? 'Loading...' : '--');
+  const balanceLabel = totalBalance ?? ((isFetchingBalance || isLoading) ? 'Loading...' : '--');
 
   const navItems = [
     { href: '/chat', label: 'Chat' },
@@ -141,15 +142,15 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setIsBalanceOpen((prev) => !prev)}
-                className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150"
+                className="flex items-center gap-2 px-6 py-3 rounded-md text-sm font-medium transition-colors duration-150"
                 style={{
                   backgroundColor: isBalanceOpen ? 'rgba(251, 237, 224, 0.12)' : 'rgba(251, 237, 224, 0.08)',
                   color: '#FBede0',
                 }}
               >
-                <span style={{ letterSpacing: '0.08em' }}>Balances</span>
+                <span style={{ letterSpacing: '0.08em' }}>Unified Balance</span>
                 <span className="text-xs opacity-80">
-                  {totalBalance ? `$${totalBalance}` : balanceDisplay}
+                  {balanceLabel}
                 </span>
               </button>
               {isBalanceOpen && (
@@ -157,7 +158,7 @@ export default function Navbar() {
                   className="absolute right-0 top-full mt-3 z-50 shadow-lg rounded-lg overflow-hidden"
                   style={{
                     width: '360px',
-                    backgroundColor: '#11131a',
+                    backgroundColor: '#1C1F2B',
                     border: '1px solid rgba(80, 96, 108, 0.4)',
                   }}
                 >

@@ -1,10 +1,10 @@
 'use client';
 
-import { lazy, Suspense, useState, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 
 // Lazy load the Nexus components
-const SimpleNexusProvider = lazy(() => import('./SimpleNexusProvider'));
+const NexusProvider = lazy(() => import('./NexusProvider'));
 const InitNexusOnConnect = lazy(() => import('../wallet/InitNexusOnConnect'));
 
 interface LazyNexusProviderProps {
@@ -30,10 +30,10 @@ export default function LazyNexusProvider({ children }: LazyNexusProviderProps) 
   // If wallet is connected, load Nexus components
   return (
     <Suspense fallback={<div>Loading Nexus SDK...</div>}>
-      <SimpleNexusProvider>
+      <NexusProvider>
         <InitNexusOnConnect />
         {children}
-      </SimpleNexusProvider>
+      </NexusProvider>
     </Suspense>
   );
 }
