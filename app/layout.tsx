@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Unbounded } from "next/font/google";
 import "../styles/globals.css";
 import Navbar from "@/components/layout/Navbar";
+import SmoothScrollWrapper from "@/components/SmoothScrollWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -11,6 +12,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const unbounded = Unbounded({
+  variable: "--font-unbounded",
+  subsets: ["latin"],
+  weight: ["700"],
 });
 
 export const metadata: Metadata = {
@@ -26,15 +33,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${unbounded.variable} antialiased`}
         style={{ backgroundColor: '#161823' }}
       >
-        <div className="min-h-screen flex flex-col">
-          <Navbar />
-          <main className="flex-1">
-            {children}
-          </main>
-        </div>
+        <Navbar />
+        <SmoothScrollWrapper>
+          <div className="min-h-screen flex flex-col">
+            <main className="flex-1">
+              {children}
+            </main>
+          </div>
+        </SmoothScrollWrapper>
       </body>
     </html>
   );
