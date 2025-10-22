@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Star } from 'lucide-react';
 
 interface AgentFiltersProps {
   onFiltersChange: (filters: {
@@ -13,11 +14,11 @@ interface AgentFiltersProps {
 export default function AgentFilters({ onFiltersChange }: AgentFiltersProps) {
   const [filters, setFilters] = useState({
     category: '',
-    priceRange: [0, 1000] as [number, number],
+    priceRange: [0, 1] as [number, number],
     rating: 0,
   });
 
-  const categories = ['AI Assistant', 'Data Analysis', 'Content Creation', 'Customer Service'];
+  const categories = ['Finance', 'Development', 'Creative', 'Analytics', 'Marketing', 'Legal'];
 
   const handleFilterChange = (newFilters: Partial<typeof filters>) => {
     const updatedFilters = { ...filters, ...newFilters };
@@ -26,58 +27,94 @@ export default function AgentFilters({ onFiltersChange }: AgentFiltersProps) {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold mb-4">Filters</h3>
-      
-      <div className="space-y-4">
+    <div className="p-6" style={{ color: '#FBede0' }}>
+      <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm mb-3" style={{ color: 'rgba(251, 237, 224, 0.8)' }}>
             Category
           </label>
-          <select
-            value={filters.category}
-            onChange={(e) => handleFilterChange({ category: e.target.value })}
-            className="w-full p-2 border border-gray-300 rounded-md"
-          >
-            <option value="">All Categories</option>
+          <div className="flex flex-col gap-2">
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                className="form-radio"
+                checked={filters.category === ''}
+                onChange={() => handleFilterChange({ category: '' })}
+                style={{ accentColor: '#FBede0' }}
+              />
+              <span className="ml-2">All Categories</span>
+            </label>
             {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
+              <label key={category} className="inline-flex items-center">
+                <input
+                  type="radio"
+                  className="form-radio"
+                  checked={filters.category === category}
+                  onChange={() => handleFilterChange({ category })}
+                  style={{ accentColor: '#FBede0' }}
+                />
+                <span className="ml-2">{category}</span>
+              </label>
             ))}
-          </select>
+          </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Price Range: ${filters.priceRange[0]} - ${filters.priceRange[1]}
+          <label className="block text-sm mb-3" style={{ color: 'rgba(251, 237, 224, 0.8)' }}>
+            Price Range: {filters.priceRange[1]} COIN
           </label>
           <input
             type="range"
-            min="0"
-            max="1000"
+            min="0.1"
+            max="1"
+            step="0.1"
             value={filters.priceRange[1]}
             onChange={(e) => handleFilterChange({ 
-              priceRange: [filters.priceRange[0], parseInt(e.target.value)] 
+              priceRange: [0, parseFloat(e.target.value)] 
             })}
             className="w-full"
+            style={{ accentColor: '#FBede0' }}
           />
+          <div className="flex justify-between text-sm mt-1" style={{ color: 'rgba(251, 237, 224, 0.6)' }}>
+            <span>0.1</span>
+            <span>1.0</span>
+          </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Minimum Rating: {filters.rating}★
+          <label className="block text-sm mb-3" style={{ color: 'rgba(251, 237, 224, 0.8)' }}>
+            Minimum Rating
           </label>
-          <input
-            type="range"
-            min="0"
-            max="5"
-            step="0.5"
-            value={filters.rating}
-            onChange={(e) => handleFilterChange({ rating: parseFloat(e.target.value) })}
-            className="w-full"
-          />
+          <div className="flex items-center gap-1 mb-2">
+            {[...Array(5)].map((_, index) => (
+              <Star 
+                key={index} 
+                onClick={() => handleFilterChange({ rating: index + 1 })}
+                className={`w-5 h-5 cursor-pointer ${index < filters.rating ? 'fill-current text-yellow-500' : 'text-gray-400'}`}
+              />
+            ))}
+          </div>
+          <div className="text-sm" style={{ color: 'rgba(251, 237, 224, 0.6)' }}>
+            {filters.rating > 0 ? `${filters.rating} stars or higher` : 'Any rating'}
+          </div>
         </div>
+        
+        <button
+          onClick={() => handleFilterChange({ category: '', priceRange: [0, 1], rating: 0 })}
+          className="w-full px-4 py-2 mt-2 text-center rounded-xl transition-all duration-200"
+          style={{
+            border: '1px solid rgba(251, 237, 224, 0.4)',
+            color: '#FBede0',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(251, 237, 224, 0.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }}
+        >
+          Reset Filters
+        </button>
       </div>
     </div>
   );

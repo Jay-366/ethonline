@@ -1,5 +1,5 @@
 interface PricingBadgeProps {
-  price: number;
+  price: number | string;
   currency?: string;
   period?: string;
   variant?: 'default' | 'premium' | 'free';
@@ -7,25 +7,25 @@ interface PricingBadgeProps {
 
 export default function PricingBadge({ 
   price, 
-  currency = '$', 
-  period = 'per use',
+  currency = '', 
+  period = 'per query',
   variant = 'default' 
 }: PricingBadgeProps) {
   const getVariantStyles = () => {
     switch (variant) {
       case 'premium':
-        return 'bg-gradient-to-r from-purple-500 to-pink-500 text-white';
+        return 'bg-gradient-to-r from-[#5C4F3D] to-[#FBede0] text-[#161823]';
       case 'free':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#2F3A3D] text-[#A3FFBD]';
       default:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-[#50606C] text-[#FBede0]';
     }
   };
 
   return (
     <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getVariantStyles()}`}>
       <span className="font-bold text-lg">{currency}{price}</span>
-      <span className="ml-1 text-xs opacity-90">{period}</span>
+      <span className="ml-1 text-xs opacity-90"> {period}</span>
     </div>
   );
 }
