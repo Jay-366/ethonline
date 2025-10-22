@@ -5,7 +5,7 @@ import { MessageSquare, ShoppingCart, Bot, Wallet } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
-import CurvedLoop from '../curved-loop';
+import CurvedLoop from '../ui/curved-loop';
 
 export default function QuickAccessSection() {
   const ref = useRef(null);
