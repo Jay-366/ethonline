@@ -74,18 +74,18 @@ export default function Navbar() {
   return (
     <header className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50
                        flex flex-col items-center
-                       pl-6 pr-6 py-3 backdrop-blur-sm
+                       px-4 py-2.5 backdrop-blur-sm
                        ${headerShapeClass}
                        border border-[rgba(251,237,224,0.2)] bg-[rgba(22,24,35,0.9)]
                        w-[calc(100%-2rem)] sm:w-auto
                        transition-[border-radius] duration-300 ease-in-out shadow-lg`}>
 
-      <div className="flex items-center justify-between w-full gap-x-6 sm:gap-x-8">
+      <div className="flex items-center justify-between w-full gap-x-3 sm:gap-x-4">
         <div className="flex items-center">
            {logoElement}
         </div>
 
-        <nav className="hidden sm:flex items-center space-x-4 sm:space-x-6 text-sm">
+        <nav className="hidden sm:flex items-center space-x-4 text-sm">
           {navItems.map((link) => {
             const isActive = pathname === link.href || 
               (link.href === '/agents' && pathname.startsWith('/agents/'));
@@ -98,7 +98,7 @@ export default function Navbar() {
           })}
         </nav>
 
-        <div className="hidden sm:flex items-center gap-2 sm:gap-3">
+        <div className="hidden sm:flex items-center gap-1.5">
           <ConnectButton.Custom>
             {({
               account,
@@ -128,7 +128,7 @@ export default function Navbar() {
                         <button
                           onClick={openConnectModal}
                           type="button"
-                          className="px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200"
+                          className="px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200"
                           style={{
                             backgroundColor: '#FBede0',
                             color: '#161823',
@@ -156,45 +156,24 @@ export default function Navbar() {
                     }
 
                     return (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
                         <button
                           onClick={openChainModal}
                           type="button"
-                          className="px-3 py-2 text-sm rounded-full transition-all duration-200"
+                          className="px-2.5 py-1.5 text-xs font-medium rounded-full transition-all duration-200 whitespace-nowrap"
                           style={{
                             backgroundColor: 'rgba(251, 237, 224, 0.1)',
                             color: '#FBede0',
                             border: '1px solid rgba(251, 237, 224, 0.2)',
                           }}
                         >
-                          {chain.hasIcon && (
-                            <div
-                              style={{
-                                background: chain.iconBackground,
-                                width: 16,
-                                height: 16,
-                                borderRadius: 999,
-                                overflow: 'hidden',
-                                marginRight: 4,
-                                display: 'inline-block',
-                              }}
-                            >
-                              {chain.iconUrl && (
-                                <img
-                                  alt={chain.name ?? 'Chain icon'}
-                                  src={chain.iconUrl}
-                                  style={{ width: 16, height: 16 }}
-                                />
-                              )}
-                            </div>
-                          )}
                           {chain.name}
                         </button>
 
                         <button
                           onClick={openAccountModal}
                           type="button"
-                          className="px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200"
+                          className="px-2.5 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 whitespace-nowrap"
                           style={{
                             backgroundColor: '#FBede0',
                             color: '#161823',

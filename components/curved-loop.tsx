@@ -17,7 +17,7 @@ interface CurvedLoopProps {
 
 const CurvedLoop = ({
   marqueeText = "",
-  speed = 2,
+  speed = 1,
   className,
   curveAmount = 400,
   direction = "left",
