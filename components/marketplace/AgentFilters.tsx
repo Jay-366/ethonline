@@ -5,7 +5,7 @@ import { Star } from 'lucide-react';
 
 interface AgentFiltersProps {
   onFiltersChange: (filters: {
-    category: string;
+    categories: string[];
     priceRange: [number, number];
     rating: number;
   }) => void;
@@ -13,12 +13,12 @@ interface AgentFiltersProps {
 
 export default function AgentFilters({ onFiltersChange }: AgentFiltersProps) {
   const [filters, setFilters] = useState({
-    category: '',
+    categories: [] as string[],
     priceRange: [0, 1] as [number, number],
     rating: 0,
   });
 
-  const categories = ['Finance', 'Development', 'Creative', 'Analytics', 'Marketing', 'Legal'];
+  const categories = ['Customer Service', 'Development', 'Workflow', 'Voice', 'Content', 'Analytics', 'Security', 'Infrastructure', 'Testing', 'Code Assistant', 'Writing'];
 
   const handleFilterChange = (newFilters: Partial<typeof filters>) => {
     const updatedFilters = { ...filters, ...newFilters };
@@ -26,36 +26,38 @@ export default function AgentFilters({ onFiltersChange }: AgentFiltersProps) {
     onFiltersChange(updatedFilters);
   };
 
+  const toggleCategory = (category: string) => {
+    const isSelected = filters.categories.includes(category);
+    const newCategories = isSelected
+      ? filters.categories.filter(c => c !== category)
+      : [...filters.categories, category];
+    
+    handleFilterChange({ categories: newCategories });
+  };
+
   return (
     <div className="p-6" style={{ color: '#FBede0' }}>
       <div className="space-y-6">
         <div>
           <label className="block text-sm mb-3" style={{ color: 'rgba(251, 237, 224, 0.8)' }}>
-            Category
+            Categories
           </label>
           <div className="flex flex-col gap-2">
-            <label className="inline-flex items-center">
-              <input
-                type="radio"
-                className="form-radio"
-                checked={filters.category === ''}
-                onChange={() => handleFilterChange({ category: '' })}
-                style={{ accentColor: '#FBede0' }}
-              />
-              <span className="ml-2">All Categories</span>
-            </label>
-            {categories.map((category) => (
-              <label key={category} className="inline-flex items-center">
-                <input
-                  type="radio"
-                  className="form-radio"
-                  checked={filters.category === category}
-                  onChange={() => handleFilterChange({ category })}
-                  style={{ accentColor: '#FBede0' }}
-                />
-                <span className="ml-2">{category}</span>
-              </label>
-            ))}
+            {categories.map((category) => {
+              const isSelected = filters.categories.includes(category);
+              return (
+                <label key={category} className="inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="form-checkbox"
+                    checked={isSelected}
+                    onChange={() => toggleCategory(category)}
+                    style={{ accentColor: '#FBede0' }}
+                  />
+                  <span className="ml-2">{category}</span>
+                </label>
+              );
+            })}
           </div>
         </div>
 
@@ -100,7 +102,7 @@ export default function AgentFilters({ onFiltersChange }: AgentFiltersProps) {
         </div>
         
         <button
-          onClick={() => handleFilterChange({ category: '', priceRange: [0, 1], rating: 0 })}
+          onClick={() => handleFilterChange({ categories: [], priceRange: [0, 1], rating: 0 })}
           className="w-full px-4 py-2 mt-2 text-center rounded-xl transition-all duration-200"
           style={{
             border: '1px solid rgba(251, 237, 224, 0.4)',

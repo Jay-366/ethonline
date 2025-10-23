@@ -147,7 +147,7 @@ const AGENTS_DATA: Agent[] = [
 export default function MarketplacePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState({
-    category: '',
+    categories: [] as string[],
     priceRange: [0, 1000] as [number, number],
     rating: 0,
   });
@@ -165,9 +165,11 @@ export default function MarketplacePage() {
       );
     }
     
-    // Apply category filter
-    if (activeFilters.category) {
-      result = result.filter((agent: Agent) => agent.category === activeFilters.category);
+    // Apply categories filter (multiple selection)
+    if (activeFilters.categories.length > 0) {
+      result = result.filter((agent: Agent) => 
+        activeFilters.categories.includes(agent.category)
+      );
     }
     
     // Apply rating filter
@@ -186,7 +188,7 @@ export default function MarketplacePage() {
 
   // Handle filter changes
   const handleFiltersChange = (filters: {
-    category: string;
+    categories: string[];
     priceRange: [number, number];
     rating: number;
   }) => {
