@@ -23,7 +23,7 @@ export default function WalletPage() {
               View your crypto balances across all chains in one place
             </p>
           </div>
-          <ConnectButton />
+          {/** Removed duplicate ConnectButton; Navbar already has one */}
         </div>
 
         {!isConnected ? (
