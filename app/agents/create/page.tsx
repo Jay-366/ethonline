@@ -78,6 +78,7 @@ export default function CreateAgentPage() {
   };
 
   return (
+    <div className="min-h-screen" style={{ backgroundColor: '#161823' }}>
     <div className="max-w-[1440px] mx-auto px-8 py-8">
       {/* Header */}
       <div className="mb-8 pb-6 border-b" style={{ borderColor: 'rgba(80, 96, 108, 0.4)' }}>
@@ -653,6 +654,7 @@ export default function CreateAgentPage() {
           </a>
         </span>
       </div>
+    </div>
     </div>
   );
 }

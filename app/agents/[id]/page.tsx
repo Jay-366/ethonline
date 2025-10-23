@@ -38,6 +38,7 @@ export default function AgentDetailsPage() {
   };
 
   return (
+    <div className="min-h-screen" style={{ backgroundColor: '#161823' }}>
     <div className="max-w-[1440px] mx-auto px-8 py-8">
       <InitNexusOnConnect />
       {/* Back Button */}
@@ -284,6 +285,7 @@ export default function AgentDetailsPage() {
         agentName={agent.name}
         subscriptionPrice={agent.price}
       />
+    </div>
     </div>
   );
 }

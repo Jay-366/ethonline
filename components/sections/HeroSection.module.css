@@ -1,0 +1,84 @@
+.heading {
+  position: relative;
+  z-index: 2;
+  perspective: 1000px;
+  -webkit-backface-visibility: visible;
+  backface-visibility: visible;
+  transform: rotate(0.1deg);
+}
+
+.clamp {
+  position: relative;
+  z-index: 3;
+}
+
+.yt {
+  z-index: 3;
+  position: relative;
+}
+
+.clamp svg {
+  position: absolute;
+  width: 112%;
+  top: 50%;
+  transform: translateY(-50%) rotate(2deg);
+  left: -6%;
+}
+
+.draw {
+  /* Let GSAP DrawSVG plugin handle the stroke animation */
+  opacity: 1;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* Smooth scroll wrapper */
+.smooth-wrapper {
+  font-family: var(--font-unbounded);
+}
+
+/* ScrollSmoother setup */
+#smooth-wrapper {
+  overflow: visible;
+}
+
+#smooth-content {
+  overflow: visible;
+}
+
+/* Ensure text is visible */
+.clamp span {
+  display: inline-block;
+  position: relative;
+  z-index: 10;
+}
+
+
+
+.clampHeading {
+  font-family: var(--font-unbounded);
+  font-weight: 700;
+  font-size: clamp(2rem, 8vw, 6rem);
+  line-height: 0.9;
+  color: #fbede0 !important;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 20px rgba(251, 237, 224, 0.3);
+}
+
+/* Enhanced gradient effect */
+.clampHeading.gradient {
+  background: linear-gradient(135deg, #fbede0 0%, #d4a574 50%, #fbede0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Fallback for browsers that don't support background-clip */
+@supports not (-webkit-background-clip: text) {
+  .clampHeading {
+    color: #fbede0 !important;
+    -webkit-text-fill-color: #fbede0 !important;
+  }
+}

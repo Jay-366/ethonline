@@ -40,6 +40,7 @@ export default function CheckoutPage() {
   const currentPlan = planDetails[plan as keyof typeof planDetails];
 
   return (
+    <div className="min-h-screen" style={{ backgroundColor: '#161823' }}>
     <div className="max-w-4xl mx-auto px-8 py-8">
       {/* Back Button */}
       <Link
@@ -282,6 +283,7 @@ export default function CheckoutPage() {
           </Link>
         </div>
       </div>
+    </div>
     </div>
   );
 }

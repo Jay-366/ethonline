@@ -23,7 +23,8 @@ export default function SubscribePage() {
   ];
 
   return (
-    <div className="max-w-[1440px] mx-auto px-8 py-8">
+    <div className="min-h-screen" style={{ backgroundColor: '#161823' }}>
+      <div className="max-w-[1440px] mx-auto px-8 py-8">
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="mb-4" style={{ color: '#FBede0', fontSize: '48px' }}>
@@ -247,6 +248,7 @@ export default function SubscribePage() {
           ))}
         </div>
       </div>
+    </div>
     </div>
   );
 }

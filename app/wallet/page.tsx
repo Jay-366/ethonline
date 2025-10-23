@@ -4,9 +4,11 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { InitNexusOnConnect } from "@/components/nexus/InitNexusOnConnect";
 import UnifiedBalance from "@/components/nexus/unified-balance/unified-balance";
+import FastBridge from "@/components/fast-bridge/fast-bridge";
+import type { Address } from "viem";
 
 export default function WalletPage() {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#161823" }}>
@@ -21,7 +23,7 @@ export default function WalletPage() {
               View your crypto balances across all chains in one place
             </p>
           </div>
-          <ConnectButton />
+          {/** Removed duplicate ConnectButton; Navbar already has one */}
         </div>
 
         {!isConnected ? (
@@ -44,7 +46,19 @@ export default function WalletPage() {
             </div>
           </div>
         ) : (
-          <UnifiedBalance />
+          <div className="flex flex-col gap-10">
+            <UnifiedBalance />
+            <div>
+              <h2 className="mb-4 text-2xl font-bold" style={{ color: "#FBede0" }}>
+                Fast Bridge
+              </h2>
+              <div className="flex justify-center">
+                {address && (
+                  <FastBridge connectedAddress={address as Address} />
+                )}
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
