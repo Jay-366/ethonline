@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Unbounded } from "next/font/google";
+
 import "../styles/globals.css";
 import Navbar from "@/components/layout/Navbar";
 import SmoothScrollWrapper from "@/components/SmoothScrollWrapper";
+import { WalletProvider } from "../providers/WalletProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,12 +41,14 @@ export default function RootLayout({
       >
         <Navbar />
         <SmoothScrollWrapper>
+          <WalletProvider>
           <div className="min-h-screen flex flex-col">
-            <main className="flex-1">
-              {children}
-            </main>
-          </div>
+                <main className="flex-1">
+                {children}
+              </main>
+            </div>
         </SmoothScrollWrapper>
+        </WalletProvider>
       </body>
     </html>
   );

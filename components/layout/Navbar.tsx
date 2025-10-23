@@ -152,6 +152,16 @@ export default function Navbar() {
           {loginButtonElement}
           {signupButtonElement}
         </div>
+        
+        {/* Connect Wallet Button */}
+        <div className="flex items-center">
+          <ConnectButton />
+        </div>
+        
+        {/* Connect Wallet Button */}
+        <div className="flex items-center">
+          <ConnectButton />
+        </div>
       </div>
     </header>
   );
