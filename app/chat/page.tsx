@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Send, Bot, User, Search, Plus, Settings, Info, Paperclip, Copy, MoreVertical } from 'lucide-react';
 import { useAgentChat } from '@/lib/useAgentChat';
+import { useAccount } from 'wagmi';
 
 // 👇 helper to create a stable session id per tab (and persist across reloads)
 function useStableSessionId(key = 'agent_session_id') {
@@ -30,13 +31,17 @@ export default function ChatPage() {
   const sessionId = useStableSessionId();
   const [isMounted, setIsMounted] = useState(false);
   const [message, setMessage] = useState('');
-  const [selectedAgent, setSelectedAgent] = useState('astra-ai');
+  const [selectedAgent, setSelectedAgent] = useState('crypto-agent');
   const [showInfoDrawer, setShowInfoDrawer] = useState(false);
   const { messages, send, pending, error } = useAgentChat();
+  const { address } = useAccount();
+  
+  console.log('ChatPage - Session ID:', sessionId, 'Wallet:', address, 'Messages Count:', messages.length);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
 
   if (!isMounted) {
     return null;
@@ -44,34 +49,14 @@ export default function ChatPage() {
 
   const agents = [
     {
-      id: 'astra-ai',
-      name: 'Astra AI',
-      tag: 'Finance Expert',
-      avatar: '💼',
+      id: 'crypto-agent',
+      name: 'CryptoAgent',
+      tag: 'Blockchain & Crypto Operations',
     },
     {
       id: 'code-master',
       name: 'Code Master',
       tag: 'Development',
-      avatar: '💻',
-    },
-    {
-      id: 'data-sage',
-      name: 'Data Sage',
-      tag: 'Analytics',
-      avatar: '📊',
-    },
-    {
-      id: 'creative-spark',
-      name: 'Creative Spark',
-      tag: 'Content Writing',
-      avatar: '✨',
-    },
-    {
-      id: 'research-pro',
-      name: 'Research Pro',
-      tag: 'Research',
-      avatar: '🔬',
     },
   ];
 
@@ -82,7 +67,7 @@ export default function ChatPage() {
     if (message.trim()) {
       const userMessage = message;
       setMessage('');
-      send(userMessage, { sessionId, agent: selectedAgent });
+      send(userMessage, { sessionId, agent: selectedAgent, wallet: address });
     }
   };
 
@@ -159,17 +144,6 @@ export default function ChatPage() {
                 }
               }}
             >
-              <div
-                className="flex items-center justify-center text-lg flex-shrink-0"
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  backgroundColor: '#50606C',
-                }}
-              >
-                {agent.avatar}
-              </div>
               <div className="flex-1 text-left">
                 <div style={{ color: 'rgba(251, 237, 224, 0.9)', fontSize: '14px' }}>
                   {agent.name}
@@ -219,17 +193,6 @@ export default function ChatPage() {
           }}
         >
           <div className="flex items-center gap-3">
-            <div
-              className="flex items-center justify-center text-lg"
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                backgroundColor: '#50606C',
-              }}
-            >
-              {currentAgent.avatar}
-            </div>
             <div>
               <div style={{ color: '#FBede0', fontSize: '15px', fontWeight: 500 }}>
                 {currentAgent.name}
@@ -467,20 +430,9 @@ export default function ChatPage() {
             </div>
 
             <div className="space-y-6">
-              {/* Agent Avatar */}
+              {/* Agent Info */}
               <div className="flex flex-col items-center text-center">
-                <div
-                  className="flex items-center justify-center text-4xl mb-3"
-                  style={{
-                    width: '80px',
-                    height: '80px',
-                    borderRadius: '50%',
-                    backgroundColor: '#50606C',
-                  }}
-                >
-                  {currentAgent.avatar}
-                </div>
-                <div style={{ color: '#FBede0', fontSize: '20px', fontWeight: 600 }}>
+                <div style={{ color: '#FBede0', fontSize: '20px', fontWeight: 600, marginBottom: '8px' }}>
                   {currentAgent.name}
                 </div>
                 <div style={{ color: 'rgba(251, 237, 224, 0.6)', fontSize: '14px' }}>
