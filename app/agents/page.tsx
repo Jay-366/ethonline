@@ -231,7 +231,7 @@ export default function MyAgentsPage() {
       <section className="max-w-[1400px] mx-auto px-6 pt-24 pb-4 bg-gradient-to-r from-[#161823] to-[#161823] text-[#f8ede0]">
         {/* Breadcrumbs */}
         <nav className="mb-4 text-sm text-[#5d606c]">
-          <Link href="/" className="hover:underline cursor-pointer">Home</Link> <span className="mx-1">&gt;</span> <Link href="/agents" className="hover:underline cursor-pointer">My Agents</Link>
+          <Link href="/" className="hover:underline cursor-pointer">Home</Link> <span className="mx-1">&gt;</span> <Link href="/agents" className="hover:underline cursor-pointer text-[#f8ede0]">My Agents</Link>
         </nav>
 
         {/* Title and subtitle */}

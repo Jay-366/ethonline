@@ -93,7 +93,7 @@ export const CategoryHeader: React.FC<CategoryHeaderProps> = ({
     <section className="max-w-[1400px] mx-auto px-6 pt-24 pb-4 bg-gradient-to-r from-[#161823] to-[#161823] text-[#f8ede0]">
       {/* Breadcrumbs */}
       <nav className="mb-4 text-sm text-[#5d606c]">
-        <Link href="/" className="hover:underline cursor-pointer">Home</Link> <span className="mx-1">&gt;</span> <Link href="/marketplace" className="hover:underline cursor-pointer">Marketplace</Link>
+        <Link href="/" className="hover:underline cursor-pointer">Home</Link> <span className="mx-1">&gt;</span> <Link href="/marketplace" className="hover:underline cursor-pointer text-[#f8ede0]">Marketplace</Link>
       </nav>
 
       {/* Title and subtitle */}
