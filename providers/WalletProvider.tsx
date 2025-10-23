@@ -1,5 +1,6 @@
 "use client";
 
+import "@/lib/polyfills/node-shim";
 import React from "react";
 import "@rainbow-me/rainbowkit/styles.css";
 import {
@@ -32,4 +33,3 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => (
     </QueryClientProvider>
   </WagmiProvider>
 );
-
