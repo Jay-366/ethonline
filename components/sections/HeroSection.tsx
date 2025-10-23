@@ -7,7 +7,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import styles from './HeroSection.module.css';
 
-const PixelBlast = dynamic(() => import('../../components/PixelBlast'), {
+const PixelBlast = dynamic(() => import('@/components/PixelBlast'), {
   ssr: false,
   loading: () => <div className="w-full h-full bg-transparent" />
 });

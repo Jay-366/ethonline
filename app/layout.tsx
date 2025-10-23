@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Unbounded } from "next/font/google";
 import "../styles/globals.css";
-import Navbar from "../components/layout/Navbar";
-import SmoothScrollWrapper from "../components/SmoothScrollWrapper";
+import Navbar from "@/components/layout/Navbar";
+import SmoothScrollWrapper from "@/components/SmoothScrollWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
