@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+// Fast Bridge now lives in the Wallet page
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -19,6 +20,7 @@ import {
 export default function LandingPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#161823' }}>
+      {/* Bridge UI is available under /wallet now */}
       {/* Hero Section */}
       <section className="relative px-6 py-20 lg:py-32">
         <div className="max-w-7xl mx-auto text-center">
