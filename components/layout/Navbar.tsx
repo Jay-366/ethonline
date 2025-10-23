@@ -99,7 +99,119 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden sm:flex items-center gap-2 sm:gap-3">
-          <ConnectButton />
+          <ConnectButton.Custom>
+            {({
+              account,
+              chain,
+              openAccountModal,
+              openChainModal,
+              openConnectModal,
+              mounted,
+            }) => {
+              const ready = mounted;
+              const connected = ready && account && chain;
+
+              return (
+                <div
+                  {...(!ready && {
+                    'aria-hidden': true,
+                    style: {
+                      opacity: 0,
+                      pointerEvents: 'none',
+                      userSelect: 'none',
+                    },
+                  })}
+                >
+                  {(() => {
+                    if (!connected) {
+                      return (
+                        <button
+                          onClick={openConnectModal}
+                          type="button"
+                          className="px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200"
+                          style={{
+                            backgroundColor: '#FBede0',
+                            color: '#161823',
+                          }}
+                        >
+                          Connect Wallet
+                        </button>
+                      );
+                    }
+
+                    if (chain.unsupported) {
+                      return (
+                        <button
+                          onClick={openChainModal}
+                          type="button"
+                          className="px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200"
+                          style={{
+                            backgroundColor: '#ff4444',
+                            color: '#ffffff',
+                          }}
+                        >
+                          Wrong network
+                        </button>
+                      );
+                    }
+
+                    return (
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={openChainModal}
+                          type="button"
+                          className="px-3 py-2 text-sm rounded-full transition-all duration-200"
+                          style={{
+                            backgroundColor: 'rgba(251, 237, 224, 0.1)',
+                            color: '#FBede0',
+                            border: '1px solid rgba(251, 237, 224, 0.2)',
+                          }}
+                        >
+                          {chain.hasIcon && (
+                            <div
+                              style={{
+                                background: chain.iconBackground,
+                                width: 16,
+                                height: 16,
+                                borderRadius: 999,
+                                overflow: 'hidden',
+                                marginRight: 4,
+                                display: 'inline-block',
+                              }}
+                            >
+                              {chain.iconUrl && (
+                                <img
+                                  alt={chain.name ?? 'Chain icon'}
+                                  src={chain.iconUrl}
+                                  style={{ width: 16, height: 16 }}
+                                />
+                              )}
+                            </div>
+                          )}
+                          {chain.name}
+                        </button>
+
+                        <button
+                          onClick={openAccountModal}
+                          type="button"
+                          className="px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200"
+                          style={{
+                            backgroundColor: '#FBede0',
+                            color: '#161823',
+                          }}
+                        >
+                          {account.displayName}
+                          {account.displayBalance
+                            ? ` (${account.displayBalance})`
+                            : ''}
+                        </button>
+                      </div>
+                    );
+                  })()}
+                </div>
+              );
+            }}
+          </ConnectButton.Custom>
         </div>
 
         <button className="sm:hidden flex items-center justify-center w-8 h-8 text-[#FBede0] focus:outline-none" onClick={toggleMenu} aria-label={isOpen ? 'Close Menu' : 'Open Menu'}>
@@ -129,7 +241,96 @@ export default function Navbar() {
           })}
         </nav>
         <div className="flex flex-col items-center space-y-4 mt-4 w-full">
-          <ConnectButton />
+          <ConnectButton.Custom>
+            {({
+              account,
+              chain,
+              openAccountModal,
+              openChainModal,
+              openConnectModal,
+              mounted,
+            }) => {
+              const ready = mounted;
+              const connected = ready && account && chain;
+
+              return (
+                <div
+                  className="w-full"
+                  {...(!ready && {
+                    'aria-hidden': true,
+                    style: {
+                      opacity: 0,
+                      pointerEvents: 'none',
+                      userSelect: 'none',
+                    },
+                  })}
+                >
+                  {(() => {
+                    if (!connected) {
+                      return (
+                        <button
+                          onClick={openConnectModal}
+                          type="button"
+                          className="w-full px-4 py-3 text-sm font-semibold rounded-full transition-all duration-200"
+                          style={{
+                            backgroundColor: '#FBede0',
+                            color: '#161823',
+                          }}
+                        >
+                          Connect Wallet
+                        </button>
+                      );
+                    }
+
+                    if (chain.unsupported) {
+                      return (
+                        <button
+                          onClick={openChainModal}
+                          type="button"
+                          className="w-full px-4 py-3 text-sm font-semibold rounded-full transition-all duration-200"
+                          style={{
+                            backgroundColor: '#ff4444',
+                            color: '#ffffff',
+                          }}
+                        >
+                          Wrong network
+                        </button>
+                      );
+                    }
+
+                    return (
+                      <div className="flex flex-col items-center gap-2 w-full">
+                        <button
+                          onClick={openChainModal}
+                          type="button"
+                          className="w-full px-3 py-2 text-sm rounded-full transition-all duration-200"
+                          style={{
+                            backgroundColor: 'rgba(251, 237, 224, 0.1)',
+                            color: '#FBede0',
+                            border: '1px solid rgba(251, 237, 224, 0.2)',
+                          }}
+                        >
+                          {chain.name}
+                        </button>
+
+                        <button
+                          onClick={openAccountModal}
+                          type="button"
+                          className="w-full px-4 py-3 text-sm font-semibold rounded-full transition-all duration-200"
+                          style={{
+                            backgroundColor: '#FBede0',
+                            color: '#161823',
+                          }}
+                        >
+                          {account.displayName}
+                        </button>
+                      </div>
+                    );
+                  })()}
+                </div>
+              );
+            }}
+          </ConnectButton.Custom>
         </div>
       </div>
     </header>
