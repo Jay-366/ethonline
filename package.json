@@ -53,12 +53,9 @@
     "motion": "^12.23.24",
     "next": "15.5.6",
     "next-themes": "^0.4.6",
-<<<<<<< HEAD
-    "process": "^0.11.10",
-=======
     "postprocessing": "^6.37.8",
+    "process": "^0.11.10",
     "radix-ui": "^1.4.3",
->>>>>>> a2297a1514837de8380b3fc8c9d4c79c817681cc
     "react": "^18.3.1",
     "react-aria-components": "^1.13.0",
     "react-day-picker": "^8.10.1",
