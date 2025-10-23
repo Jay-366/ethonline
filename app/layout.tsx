@@ -3,8 +3,7 @@ import { Geist, Geist_Mono, Unbounded } from "next/font/google";
 
 import "../styles/globals.css";
 import Navbar from "@/components/layout/Navbar";
-import SmoothScrollWrapper from "@/components/SmoothScrollWrapper";
-import { WalletProvider } from "../providers/WalletProvider";
+import { WalletProvider }  from "@/providers/WalletProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <html lang="en" suppressHydrationWarning>
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${unbounded.variable} antialiased`}

@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { useNexus } from "../NexusProvider";
+import { useNexus } from '@/components/nexus/NexusProvider';
 import { Label } from "../../ui/label";
 import { DollarSign } from "lucide-react";
 import {
