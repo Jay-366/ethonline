@@ -3,10 +3,14 @@
 import { Star, TrendingUp, ArrowLeft, MessageCircle, DollarSign } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useState } from 'react';
+import SubscribeModal from '@/components/agents/SubscribeModal';
+import { InitNexusOnConnect } from '@/components/nexus/InitNexusOnConnect';
 
 export default function AgentDetailsPage() {
   const params = useParams();
   const agentId = params.id;
+  const [showSubscribeModal, setShowSubscribeModal] = useState(false);
 
   // Mock agent data - in a real app, this would come from an API
   const agent = {
@@ -35,6 +39,7 @@ export default function AgentDetailsPage() {
 
   return (
     <div className="max-w-[1440px] mx-auto px-8 py-8">
+      <InitNexusOnConnect />
       {/* Back Button */}
       <Link
         href="/marketplace"
@@ -249,6 +254,7 @@ export default function AgentDetailsPage() {
               </Link>
               
               <button
+                onClick={() => setShowSubscribeModal(true)}
                 className="w-full px-6 py-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
                 style={{
                   backgroundColor: 'transparent',
@@ -269,6 +275,15 @@ export default function AgentDetailsPage() {
           </div>
         </div>
       </div>
+
+      {/* Subscribe Modal */}
+      <SubscribeModal
+        isOpen={showSubscribeModal}
+        onClose={() => setShowSubscribeModal(false)}
+        agentId={String(agent.id)}
+        agentName={agent.name}
+        subscriptionPrice={agent.price}
+      />
     </div>
   );
 }

@@ -1,13 +1,46 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Send, Bot, User, Search, Plus, Settings, Info, Paperclip, Copy, MoreVertical } from 'lucide-react';
+import { useAgentChat } from '@/lib/useAgentChat';
+
+// 👇 helper to create a stable session id per tab (and persist across reloads)
+function useStableSessionId(key = 'agent_session_id') {
+  const ref = useRef<string | null>(null);
+  if (ref.current === null) {
+    if (typeof window !== 'undefined') {
+      const fromStore = window.sessionStorage.getItem(key);
+      if (fromStore) {
+        ref.current = fromStore;
+      } else {
+        const id = (typeof crypto !== 'undefined' && 'randomUUID' in crypto)
+          ? crypto.randomUUID()
+          : String(Date.now()) + '-' + Math.random().toString(36).slice(2);
+        window.sessionStorage.setItem(key, id);
+        ref.current = id;
+      }
+    } else {
+      ref.current = 'server-' + Date.now();
+    }
+  }
+  return ref.current!;
+}
 
 export default function ChatPage() {
+  const sessionId = useStableSessionId();
+  const [isMounted, setIsMounted] = useState(false);
   const [message, setMessage] = useState('');
   const [selectedAgent, setSelectedAgent] = useState('astra-ai');
   const [showInfoDrawer, setShowInfoDrawer] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
+  const { messages, send, pending, error } = useAgentChat();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
   const agents = [
     {
@@ -42,53 +75,14 @@ export default function ChatPage() {
     },
   ];
 
-  const messages = [
-    {
-      id: 1,
-      sender: 'user',
-      text: 'Hey, I need help analyzing some market data for crypto trends.',
-      time: '2:34 PM',
-    },
-    {
-      id: 2,
-      sender: 'agent',
-      text: "I'd be happy to help you with that! I can analyze cryptocurrency market trends, provide insights on price movements, and identify potential patterns. What specific cryptocurrencies or timeframe are you interested in?",
-      time: '2:34 PM',
-    },
-    {
-      id: 3,
-      sender: 'user',
-      text: 'Focus on Bitcoin and Ethereum over the last 30 days.',
-      time: '2:35 PM',
-    },
-    {
-      id: 4,
-      sender: 'agent',
-      text: "Perfect! I'll analyze Bitcoin and Ethereum's performance over the last 30 days. Here's what I found:\n\n📈 Bitcoin (BTC):\n- Up 12.5% over the period\n- Current price: $43,250\n- Notable support at $40,000\n\n📊 Ethereum (ETH):\n- Up 18.3% over the period\n- Current price: $2,680\n- Strong momentum above $2,500\n\nBoth assets show bullish sentiment. Would you like a deeper analysis?",
-      time: '2:36 PM',
-    },
-    {
-      id: 5,
-      sender: 'user',
-      text: 'Can you show me a Python code snippet to fetch this data?',
-      time: '2:37 PM',
-    },
-    {
-      id: 6,
-      sender: 'agent',
-      text: "Absolutely! Here's a Python snippet using the CoinGecko API:",
-      time: '2:37 PM',
-      code: 'import requests\nfrom datetime import datetime, timedelta\n\ndef fetch_crypto_data(crypto_id, days=30):\n    url = f"https://api.coingecko.com/api/v3/coins/{crypto_id}/market_chart"\n    params = {\n        \'vs_currency\': \'usd\',\n        \'days\': days\n    }\n    response = requests.get(url, params=params)\n    return response.json()\n\n# Fetch Bitcoin and Ethereum data\nbtc_data = fetch_crypto_data(\'bitcoin\', 30)\neth_data = fetch_crypto_data(\'ethereum\', 30)\n\nprint(f"BTC Price: ${btc_data[\'prices\'][-1][1]:,.2f}")\nprint(f"ETH Price: ${eth_data[\'prices\'][-1][1]:,.2f}")',
-    },
-  ];
 
   const currentAgent = agents.find(a => a.id === selectedAgent) || agents[0];
 
   const handleSend = () => {
     if (message.trim()) {
+      const userMessage = message;
       setMessage('');
-      setIsTyping(true);
-      setTimeout(() => setIsTyping(false), 2000);
+      send(userMessage, { sessionId, agent: selectedAgent });
     }
   };
 
@@ -99,12 +93,9 @@ export default function ChatPage() {
     }
   };
 
-  const copyCode = (code: string) => {
-    navigator.clipboard.writeText(code);
-  };
 
   return (
-    <div className="flex" style={{ backgroundColor: '#161823', height: 'calc(100vh - 60px)' }}>
+    <div className="flex" style={{ backgroundColor: '#161823', height: 'calc(100vh - 60px)', position: 'fixed', top: '60px', left: 0, right: 0, bottom: 0 }}>
       {/* Sidebar - Agent List */}
       <div
         className="flex flex-col"
@@ -292,73 +283,40 @@ export default function ChatPage() {
               <div className="flex-1" style={{ height: '1px', backgroundColor: 'rgba(80, 96, 108, 0.4)' }} />
             </div>
 
-            {messages.map((msg) => (
+            {messages.map((msg, index) => (
               <div
-                key={msg.id}
-                className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                key={index}
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div className="flex flex-col" style={{ maxWidth: '70%' }}>
                   <div
                     className="px-4 py-3 transition-all duration-200"
                     style={{
-                      backgroundColor: msg.sender === 'user' ? '#50606C' : '#1C1F2B',
-                      border: msg.sender === 'agent' ? '1px solid #50606C' : 'none',
+                      backgroundColor: msg.role === 'user' ? '#50606C' : '#1C1F2B',
+                      border: msg.role === 'assistant' ? '1px solid #50606C' : 'none',
                       color: '#FBede0',
                       borderRadius:
-                        msg.sender === 'user'
+                        msg.role === 'user'
                           ? '16px 0 16px 16px'
                           : '0 16px 16px 16px',
                       fontSize: '14px',
                       lineHeight: '1.6',
                     }}
                   >
-                    {msg.text}
-                    
-                    {/* Code Block */}
-                    {msg.code && (
-                      <div
-                        className="mt-3 p-3 rounded-lg relative"
-                        style={{
-                          backgroundColor: '#1C1F2B',
-                          borderLeft: '3px solid #FBede0',
-                          fontSize: '13px',
-                          fontFamily: 'monospace',
-                        }}
-                      >
-                        <button
-                          onClick={() => copyCode(msg.code!)}
-                          className="absolute top-2 right-2 p-1 rounded transition-all duration-200"
-                          style={{
-                            border: '1px solid #FBede0',
-                            backgroundColor: 'transparent',
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'rgba(251, 237, 224, 0.1)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                          }}
-                        >
-                          <Copy className="w-3 h-3" style={{ color: '#FBede0' }} />
-                        </button>
-                        <pre style={{ color: 'rgba(251, 237, 224, 0.8)', whiteSpace: 'pre-wrap', marginTop: '20px' }}>
-                          {msg.code}
-                        </pre>
-                      </div>
-                    )}
+                    {msg.content}
                   </div>
                   <div
                     className="mt-1 text-right"
                     style={{ color: 'rgba(251, 237, 224, 0.5)', fontSize: '12px' }}
                   >
-                    {msg.time}
+                    {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
               </div>
             ))}
 
             {/* Typing Indicator */}
-            {isTyping && (
+            {pending && (
               <div className="flex justify-start">
                 <div
                   className="px-4 py-3 rounded-2xl flex items-center gap-1"
@@ -379,6 +337,23 @@ export default function ChatPage() {
                     className="w-2 h-2 rounded-full animate-bounce"
                     style={{ backgroundColor: 'rgba(251, 237, 224, 0.7)', animationDelay: '300ms' }}
                   />
+                </div>
+              </div>
+            )}
+
+            {/* Error Display */}
+            {error && (
+              <div className="flex justify-start">
+                <div
+                  className="px-4 py-3 rounded-2xl"
+                  style={{
+                    backgroundColor: '#dc2626',
+                    color: '#FBede0',
+                    maxWidth: '70%',
+                    fontSize: '14px',
+                  }}
+                >
+                  Error: {error}
                 </div>
               </div>
             )}
