@@ -177,10 +177,12 @@ export const CreatedAgentCard = React.forwardRef<HTMLDivElement, CreatedAgentCar
           <div className="absolute top-0 left-0">
             <span 
               className={cn(
-                badgeVariants({ 
-                  variant: status === 'Active' ? 'success' : status === 'Inactive' ? 'warning' : 'info', 
-                  size: 'md' 
-                })
+                'inline-flex items-center gap-1.5 rounded-full border backdrop-blur-sm font-medium shadow-xs transition-all duration-200 px-3 py-1 text-xs',
+                status === 'Active' 
+                  ? 'border-[#f8ede0]/30 bg-[#f8ede0]/10 text-[#f8ede0]' 
+                  : status === 'Inactive' 
+                  ? 'border-[#5d606c]/50 bg-[#5d606c]/20 text-[#5d606c]' 
+                  : 'border-[#f8ede0]/20 bg-[#161823]/60 text-[#f8ede0]/70'
               )}
             >
               <DollarSign className="h-2.5 w-2.5" />
@@ -199,12 +201,12 @@ export const CreatedAgentCard = React.forwardRef<HTMLDivElement, CreatedAgentCar
                 {/* Status indicator */}
                 <span 
                   className={cn(
-                    'text-[10px] font-semibold px-2 py-0.5 rounded',
+                    'text-[10px] font-semibold px-2 py-0.5 rounded border',
                     status === 'Active' 
-                      ? 'bg-green-500/20 text-green-400' 
+                      ? 'bg-[#f8ede0]/10 text-[#f8ede0] border-[#f8ede0]/30' 
                       : status === 'Inactive' 
-                      ? 'bg-yellow-500/20 text-yellow-400' 
-                      : 'bg-blue-500/20 text-blue-400'
+                      ? 'bg-[#5d606c]/20 text-[#5d606c] border-[#5d606c]/50' 
+                      : 'bg-[#161823]/60 text-[#f8ede0]/70 border-[#f8ede0]/20'
                   )}
                 >
                   {status}
