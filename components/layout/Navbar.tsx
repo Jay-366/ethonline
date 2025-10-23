@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const AnimatedNavLink = ({ href, children, isActive }: { href: string; children: React.ReactNode; isActive: boolean }) => {
   const defaultTextColor = isActive ? 'text-[#FBede0]' : 'text-[rgba(251,237,224,0.7)]';
@@ -70,26 +71,6 @@ export default function Navbar() {
     </Link>
   );
 
-  const loginButtonElement = (
-    <button className="px-4 py-2 sm:px-3 text-xs sm:text-sm border border-[rgba(251,237,224,0.2)] bg-[rgba(22,24,35,0.1)] text-[#FBede0] rounded-full hover:border-[rgba(251,237,224,0.4)] hover:bg-[rgba(22,24,35,0.2)] transition-colors duration-200 w-full sm:w-auto">
-      Profile
-    </button>
-  );
-
-  const signupButtonElement = (
-    <div className="relative group w-full sm:w-auto">
-       <div className="absolute inset-0 -m-2 rounded-full
-                     hidden sm:block
-                     bg-[#FBede0]
-                     opacity-20 filter blur-lg pointer-events-none
-                     transition-all duration-300 ease-out
-                     group-hover:opacity-30 group-hover:blur-xl group-hover:-m-3"></div>
-       <button className="relative z-10 px-4 py-2 sm:px-3 text-xs sm:text-sm font-semibold text-[#161823] bg-gradient-to-br from-[#FBede0] to-[rgba(251,237,224,0.8)] rounded-full hover:from-[rgba(251,237,224,0.9)] hover:to-[#FBede0] transition-all duration-200 w-full sm:w-auto">
-         Connect Wallet
-       </button>
-    </div>
-  );
-
   return (
     <header className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50
                        flex flex-col items-center
@@ -118,8 +99,7 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden sm:flex items-center gap-2 sm:gap-3">
-          {loginButtonElement}
-          {signupButtonElement}
+          <ConnectButton />
         </div>
 
         <button className="sm:hidden flex items-center justify-center w-8 h-8 text-[#FBede0] focus:outline-none" onClick={toggleMenu} aria-label={isOpen ? 'Close Menu' : 'Open Menu'}>
@@ -149,17 +129,6 @@ export default function Navbar() {
           })}
         </nav>
         <div className="flex flex-col items-center space-y-4 mt-4 w-full">
-          {loginButtonElement}
-          {signupButtonElement}
-        </div>
-        
-        {/* Connect Wallet Button */}
-        <div className="flex items-center">
-          <ConnectButton />
-        </div>
-        
-        {/* Connect Wallet Button */}
-        <div className="flex items-center">
           <ConnectButton />
         </div>
       </div>

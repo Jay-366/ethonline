@@ -39,15 +39,15 @@ export default function RootLayout({
         style={{ backgroundColor: '#161823' }}
         suppressHydrationWarning
       >
-        <Navbar />
-        <SmoothScrollWrapper>
-          <WalletProvider>
-          <div className="min-h-screen flex flex-col">
-                <main className="flex-1">
+        <WalletProvider>
+          <Navbar />
+          <SmoothScrollWrapper>
+            <div className="min-h-screen flex flex-col">
+              <main className="flex-1">
                 {children}
               </main>
             </div>
-        </SmoothScrollWrapper>
+          </SmoothScrollWrapper>
         </WalletProvider>
       </body>
     </html>
