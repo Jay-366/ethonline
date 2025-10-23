@@ -32,7 +32,6 @@ export default function Navbar() {
     { href: '/agents', label: 'My Agents' },
     { href: '/marketplace', label: 'Marketplace' },
     { href: '/wallet', label: 'Wallet' },
-    { href: '/settings', label: 'Settings' },
   ];
 
   const toggleMenu = () => {
