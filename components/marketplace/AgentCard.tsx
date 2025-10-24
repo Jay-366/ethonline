@@ -1,5 +1,6 @@
 
 import React from "react";
+import { useRouter } from 'next/navigation';
 
 /*
  * AgentCard component
@@ -14,6 +15,10 @@ import React from "react";
  */
 
 export type AgentCardProps = {
+  /**
+   * The agent ID for navigation.
+   */
+  id: string;
   /**
    * The display name of the agent (e.g., "AgentOps").
    */
@@ -68,6 +73,7 @@ const Star: React.FC<{ filled: boolean }> = ({ filled }) => (
  * description, a rating row with stars, a divider, tags and the price.
  */
 export const AgentCard: React.FC<AgentCardProps> = ({
+  id,
   name,
   description,
   rating,
@@ -76,6 +82,8 @@ export const AgentCard: React.FC<AgentCardProps> = ({
   price,
   onDeploy,
 }) => {
+  const router = useRouter();
+  
   // Determine how many stars should appear filled based on the rating.
   const filledStars = Math.round(rating);
 
@@ -170,7 +178,11 @@ export const AgentCard: React.FC<AgentCardProps> = ({
           }}
           onClick={(e) => {
             e.stopPropagation();
-            onDeploy?.();
+            if (onDeploy) {
+              onDeploy();
+            } else {
+              router.push(`/agents/${id}`);
+            }
           }}
         >
           Deploy Agent

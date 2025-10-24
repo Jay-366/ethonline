@@ -233,6 +233,7 @@ export default function MarketplacePage() {
             {(filteredAgents.length > 0 ? filteredAgents : AGENTS_DATA).map((agent: Agent) => (
               <AgentCard
                 key={agent.id}
+                id={String(agent.id)}
                 name={agent.name}
                 description={agent.description}
                 rating={agent.rating}
