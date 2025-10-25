@@ -104,7 +104,7 @@ const AGENTS_DATA: Record<string, {
     category: 'Agent',
     rating: 4.3,
     reviews: 2236,
-    price: '0.019 ETH/Sub',
+    price: '10 USDC/Sub',
     description: "I'm providing advanced cryptocurrency analysis and trading strategies quickly and professionally. I'll be happy to help you with your crypto trading.",
     longDescription: 'Crypto Agent providing advanced cryptocurrency analysis and trading strategies quickly and professionally ,agents represent the next generation of customer service automation. Built on advanced natural language processing, these agents can understand context, sentiment, and intent to provide personalized support across chat, email, and social media platforms. The system learns from each interaction to continuously improve response quality and customer satisfaction.',
     trending: true,
@@ -121,13 +121,13 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '12,340',
     successRate: '97.2%'
   },
-  "bafybeifj4k7l8m9n0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0": {
-    id: "bafybeifj4k7l8m9n0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0",
+  "bafybeig3k52cgqhvaatvstf7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7ei": {
+    id: "bafybeig3k52cgqhvaatvstf7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7ei",
     name: 'Phala Network',
     category: 'Infrastructure',
     rating: 4.3,
     reviews: 2236,
-    price: '0.009 ETH/Sub',
+    price: '15 USDC/Sub',
     description: 'Secure, trustless AI computing without compromise. Deploy AI agents on decentralized infrastructure with built-in privacy protection.',
     longDescription: 'Phala Network provides a decentralized cloud computing infrastructure specifically designed for AI agents. Using Trusted Execution Environments (TEE), Phala ensures that your AI computations remain private and secure while maintaining verifiability. This unique approach enables developers to build confidential AI applications without trusting centralized cloud providers.',
     trending: true,
@@ -144,13 +144,13 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '15,420',
     successRate: '98.5%'
   },
-  "bafybeig3k52cgqhvaatvstf7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7ei": {
-    id: "bafybeig3k52cgqhvaatvstf7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7ei",
+  "bafybeifh7vn89xk2pqlwrtc3mbf9g8sjkxnp6qqme8rwjrmh4sx8de2qp9": {
+    id: "bafybeifh7vn89xk2pqlwrtc3mbf9g8sjkxnp6qqme8rwjrmh4sx8de2qp9",
     name: 'AgentOps',
     category: 'Development',
     rating: 4.3,
     reviews: 2236,
-    price: '0.012 ETH/Sub',
+    price: '5 USDC/Sub',
     description: 'Unleash reliable AI agents with comprehensive testing and optimization. Monitor, debug, and improve your AI agent performance in production.',
     longDescription: 'AgentOps is the complete DevOps platform for AI agents. It provides end-to-end observability, testing frameworks, and optimization tools to ensure your AI agents perform reliably in production. With built-in monitoring, debugging, and A/B testing capabilities, AgentOps helps teams ship better AI products faster.',
     trending: true,
@@ -167,13 +167,13 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '18,920',
     successRate: '96.8%'
   },
-  "bafybeih2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6k": {
-    id: "bafybeih2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6k",
+  "bafybeiq9m3kx7p2vwrtf5jhqnpuqqme7cwjrmhs4x8de2qp9s7eifh7vn8": {
+    id: "bafybeiq9m3kx7p2vwrtf5jhqnpuqqme7cwjrmhs4x8de2qp9s7eifh7vn8",
     name: 'Dify',
     category: 'Workflow',
     rating: 4.3,
     reviews: 2236,
-    price: '0.012 ETH/Sub',
+    price: '8 USDC/Sub',
     description: 'Build powerful AI agents and workflows in minutes. Visual agent builder with pre-built templates and integrations.',
     longDescription: 'Dify empowers teams to build sophisticated AI agents without extensive coding. Its visual workflow builder combines the power of large language models with an intuitive interface, enabling rapid prototyping and deployment. With pre-built templates and extensive integrations, Dify accelerates AI agent development from concept to production.',
     trending: true,
@@ -190,13 +190,13 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '14,560',
     successRate: '95.4%'
   },
-  "bafybeid7l8m9n0o1p2q3r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2": {
-    id: "bafybeid7l8m9n0o1p2q3r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2",
+  "bafybeir2p9s7eifh7vn89xk2pqlwrtc3mbf9g8sjkxnpuqqme8rwjrmh4s": {
+    id: "bafybeir2p9s7eifh7vn89xk2pqlwrtc3mbf9g8sjkxnpuqqme8rwjrmh4s",
     name: 'Oovol',
     category: 'Testing',
     rating: 4.3,
     reviews: 2236,
-    price: '0.012 ETH/Sub',
+    price: '12 USDC/Sub',
     description: 'Ship reliable AI agents faster with comprehensive simulation and testing environments before deployment.',
     longDescription: 'Oovol provides enterprise-grade testing and simulation environments for AI agents. Create realistic test scenarios, simulate edge cases, and validate agent behavior before production deployment. With automated regression testing and performance benchmarking, Oovol ensures your agents meet quality standards consistently.',
     trending: false,
@@ -213,13 +213,13 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '9,840',
     successRate: '98.1%'
   },
-  "bafybeie9k3l4m5n6o7p8q9r0s1t2u3v4w5x6y7z8a9b0c1d2e3f4g5h6i7": {
-    id: "bafybeie9k3l4m5n6o7p8q9r0s1t2u3v4w5x6y7z8a9b0c1d2e3f4g5h6i7",
+  "bafybeisk2cgqhvaatvstf7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7eifh7": {
+    id: "bafybeisk2cgqhvaatvstf7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7eifh7",
     name: 'Neets.ai',
     category: 'Voice',
     rating: 4.3,
     reviews: 2236,
-    price: '0.018 ETH/Sub',
+    price: '7 USDC/Sub',
     description: 'Build powerful voice AI agents with natural conversations. Real-time speech processing and multi-language support.',
     longDescription: 'Neets.ai specializes in voice-enabled AI agents with human-like conversational abilities. Leveraging advanced speech synthesis and recognition technologies, Neets.ai enables developers to create voice agents that understand context, detect emotions, and respond naturally across multiple languages.',
     trending: false,
@@ -236,13 +236,13 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '11,230',
     successRate: '94.7%'
   },
-  "bafybeif5m6n7o8p9q0r1s2t3u4v5w6x7y8z9a0b1c2d3e4f5g6h7i8j9k0": {
-    id: "bafybeif5m6n7o8p9q0r1s2t3u4v5w6x7y8z9a0b1c2d3e4f5g6h7i8j9k0",
+  "bafybeit7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrt": {
+    id: "bafybeit7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrt",
     name: 'Potpie AI',
     category: 'Code Assistant',
     rating: 4.3,
     reviews: 2239,
-    price: '0.012 ETH/Sub',
+    price: '9 USDC/Sub',
     description: 'Build custom AI coding agents that understand your entire codebase. Automated code review, bug detection, and documentation.',
     longDescription: 'Potpie AI revolutionizes software development with intelligent coding agents that understand your entire codebase. From automated code reviews to intelligent refactoring suggestions, Potpie AI helps development teams maintain code quality while accelerating delivery. The agents learn your coding patterns and best practices to provide personalized assistance.',
     trending: false,
@@ -259,13 +259,13 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '16,720',
     successRate: '96.3%'
   },
-  "bafybeig1n2o3p4q5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0g1h2i3j4k5l6": {
-    id: "bafybeig1n2o3p4q5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0g1h2i3j4k5l6",
+  "bafybeiu3mbf9g8sjkxnp6qqme8rwjrmh4sx8de2qp9s7eifh7vn89xk2pq": {
+    id: "bafybeiu3mbf9g8sjkxnp6qqme8rwjrmh4sx8de2qp9s7eifh7vn89xk2pq",
     name: 'Jasper AI',
     category: 'Content',
     rating: 4.3,
     reviews: 2236,
-    price: '0.012 ETH/Sub',
+    price: '12 USDC/Sub',
     description: 'AI-powered content agents that transform how teams create and execute marketing content at scale.',
     longDescription: 'Jasper AI empowers marketing teams with AI agents specialized in content creation. From blog posts to social media campaigns, Jasper AI understands brand voice, target audiences, and content strategies to produce engaging, on-brand content at scale. Built-in SEO optimization and multi-platform adaptation ensure maximum content effectiveness.',
     trending: false,
@@ -282,13 +282,13 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '13,450',
     successRate: '95.8%'
   },
-  "bafybeih7o8p9q0r1s2t3u4v5w6x7y8z9a0b1c2d3e4f5g6h7i8j9k0l1m2": {
-    id: "bafybeih7o8p9q0r1s2t3u4v5w6x7y8z9a0b1c2d3e4f5g6h7i8j9k0l1m2",
+  "bafybeiv5jhqnpuqqme7cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrtc3m": {
+    id: "bafybeiv5jhqnpuqqme7cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrtc3m",
     name: 'PrivateAI',
     category: 'Security',
     rating: 4.3,
     reviews: 2236,
-    price: '0.018 ETH/Sub',
+    price: '6 USDC/Sub',
     description: 'Secure AI-powered privacy protection agents for sensitive data. Enterprise-grade encryption and compliance.',
     longDescription: 'PrivateAI delivers enterprise-grade security for AI agents handling sensitive data. With end-to-end encryption, compliance frameworks (GDPR, HIPAA, SOC2), and advanced threat detection, PrivateAI ensures that your AI operations meet the highest security standards. Ideal for healthcare, finance, and regulated industries.',
     trending: false,
@@ -305,13 +305,13 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '8,920',
     successRate: '99.2%'
   },
-  "bafybeid3p4q5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0g1h2i3j4k5l6m7n8": {
-    id: "bafybeid3p4q5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0g1h2i3j4k5l6m7n8",
+  "bafybeiw8sjkxnpuqqme9cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrtc3": {
+    id: "bafybeiw8sjkxnpuqqme9cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrtc3",
     name: 'HyperWrite AI',
     category: 'Writing',
     rating: 4.3,
     reviews: 2239,
-    price: '0.012 ETH/Sub',
+    price: '10 USDC/Sub',
     description: 'Build custom writing AI agents with your brand voice. Automated content generation, editing, and optimization.',
     longDescription: 'HyperWrite AI provides specialized writing agents that adapt to your unique style and requirements. Whether you need technical documentation, creative writing, or business communications, HyperWrite AI learns your preferences and produces high-quality content that matches your voice. Advanced editing and optimization features ensure polished, professional results.',
     trending: false,
@@ -328,13 +328,13 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '14,890',
     successRate: '96.5%'
   },
-  "bafybeie9q0r1s2t3u4v5w6x7y8z9a0b1c2d3e4f5g6h7i8j9k0l1m2n3o4": {
-    id: "bafybeie9q0r1s2t3u4v5w6x7y8z9a0b1c2d3e4f5g6h7i8j9k0l1m2n3o4",
+  "bafybeix6qqme8rwjrmh4sx8de2qp9s7eifh7vn89xk2pqlwrtc3mbf9g8s": {
+    id: "bafybeix6qqme8rwjrmh4sx8de2qp9s7eifh7vn89xk2pqlwrtc3mbf9g8s",
     name: 'Nelima',
     category: 'Analytics',
     rating: 4.3,
     reviews: 2236,
-    price: '0.012 ETH/Sub',
+    price: '20 USDC/Sub',
     description: 'Intelligent AI analytics agents transforming data into strategic insights with automated reporting and predictions.',
     longDescription: 'Nelima transforms raw data into actionable intelligence with AI agents specialized in analytics and business intelligence. From automated data analysis to predictive modeling, Nelima helps organizations make data-driven decisions faster. The platform integrates with popular data sources and provides natural language insights that everyone can understand.',
     trending: false,
@@ -351,13 +351,13 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '10,560',
     successRate: '97.4%'
   },
-  "bafybeif5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0g1h2i3j4k5l6m7n8o9p0": {
-    id: "bafybeif5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0g1h2i3j4k5l6m7n8o9p0",
+  "bafybeiy9cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrtc3mbf9g8sjkxnp": {
+    id: "bafybeiy9cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrtc3mbf9g8sjkxnp",
     name: 'Vapi',
     category: 'Voice',
     rating: 4.3,
     reviews: 2236,
-    price: '0.018 ETH/Sub',
+    price: '12 USDC/Sub',
     description: 'Ship reliable voice AI agents faster with comprehensive simulation and testing for conversational interfaces.',
     longDescription: 'Vapi accelerates voice AI development with comprehensive tools for building, testing, and deploying conversational agents. Its simulation environment lets you test thousands of conversation scenarios before going live, ensuring your voice agents handle real-world interactions gracefully. Built-in analytics help optimize conversation flows for better user experiences.',
     trending: false,

@@ -118,7 +118,7 @@ export default function SubscribeModal({
                 Subscribe to {agentName}
               </h3>
               <p className="text-sm mb-6" style={{ color: 'rgba(251, 237, 224, 0.6)' }}>
-                Pay {SUBSCRIPTION_AMOUNT} ETH to subscribe to this agent. The payment will be processed on {getChainName(TARGET_CHAIN_ID)}.
+                Pay {SUBSCRIPTION_AMOUNT} USDC to subscribe to this agent. The payment will be processed on {getChainName(TARGET_CHAIN_ID)}.
               </p>
               
               <div className="space-y-4 mb-6">
@@ -129,7 +129,7 @@ export default function SubscribeModal({
                   </div>
                   <div className="flex items-center justify-between mb-2">
                     <span style={{ color: 'rgba(251, 237, 224, 0.7)' }}>Price</span>
-                    <span style={{ color: '#FBede0' }}>{SUBSCRIPTION_AMOUNT} ETH</span>
+                    <span style={{ color: '#FBede0' }}>{SUBSCRIPTION_AMOUNT} USDC</span>
                   </div>
                   <div className="flex items-center justify-between mb-2">
                     <span style={{ color: 'rgba(251, 237, 224, 0.7)' }}>Destination</span>
@@ -207,7 +207,7 @@ export default function SubscribeModal({
                         </>
                       ) : (
                         <>
-                          Subscribe & Pay {SUBSCRIPTION_AMOUNT} ETH
+                          Subscribe & Pay {SUBSCRIPTION_AMOUNT} USDC
                           <ArrowRight className="w-4 h-4" />
                         </>
                       )}
