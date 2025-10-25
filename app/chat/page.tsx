@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Send, Bot, User, Search, Plus, Settings, Info, Paperclip, Copy, MoreVertical } from 'lucide-react';
 import { useAgentChat } from '@/lib/useAgentChat';
 import { useAccount } from 'wagmi';
+import { DropdownMenu } from '@/components/ui/dropdown-menu';
+import SplitText from '@/components/SplitText';
 
 // 👇 helper to create a stable session id per tab (and persist across reloads)
 function useStableSessionId(key = 'agent_session_id') {
@@ -33,6 +35,7 @@ export default function ChatPage() {
   const [message, setMessage] = useState('');
   const [selectedAgent, setSelectedAgent] = useState('crypto-agent');
   const [showInfoDrawer, setShowInfoDrawer] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { messages, send, pending, error } = useAgentChat();
   const { address } = useAccount();
   
@@ -54,9 +57,38 @@ export default function ChatPage() {
       tag: 'Blockchain & Crypto Operations',
     },
     {
-      id: 'code-master',
-      name: 'Code Master',
+      id: 'master-agent',
+      name: 'Master Agent',
       tag: 'Development',
+    },
+  ];
+
+  // Dropdown menu options for agent selection
+  const handleDropdownAgentSelect = (agentId: string, agentName: string) => {
+    console.log('Selected agent:', agentId, '-', agentName);
+    setSelectedAgent(agentId);
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      console.log('Selected file:', file.name, 'Size:', file.size, 'Type:', file.type);
+    }
+  };
+
+  const handleAttachClick = () => {
+    document.getElementById('file-input')?.click();
+  };
+
+  const dropdownOptions = [
+    {
+      label: 'Crypto Agent',
+      onClick: () => handleDropdownAgentSelect('crypto-agent', 'Crypto Agent'),
+    },
+    {
+      label: 'Master Agent', 
+      onClick: () => handleDropdownAgentSelect('master-agent', 'Master Agent'),
     },
   ];
 
@@ -91,13 +123,13 @@ export default function ChatPage() {
         }}
       >
         {/* Sidebar Header */}
-        <div className="p-4 border-b" style={{ borderColor: 'rgba(80, 96, 108, 0.4)' }}>
+        <div className="p-4">
           <h2 className="mb-3" style={{ color: '#FBede0', fontSize: '16px', fontWeight: 600 }}>
             Agents
           </h2>
           
           {/* Search Bar */}
-          <div className="relative">
+          <div className="relative mb-3">
             <Search
               className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4"
               style={{ color: 'rgba(251, 237, 224, 0.5)' }}
@@ -120,64 +152,106 @@ export default function ChatPage() {
               }}
             />
           </div>
+          
+          {/* Agent Selection Dropdown */}
+          <div className="mb-3">
+            <div className="w-full">
+              <DropdownMenu options={dropdownOptions}>
+                Select Agent
+              </DropdownMenu>
+            </div>
+          </div>
+          
+          {/* New Chat Button */}
+          <div className="mb-3">
+            <button
+              className="w-full px-4 py-2 rounded-xl flex items-center justify-center gap-2 transition-all duration-200"
+              style={{
+                border: '1px solid #FBede0',
+                backgroundColor: 'transparent',
+                color: '#FBede0',
+                fontSize: '14px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#FBede0';
+                e.currentTarget.style.color = '#161823';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = '#FBede0';
+              }}
+            >
+              <Plus className="w-4 h-4" />
+              New Chat
+            </button>
+          </div>
+          
+          {/* Horizontal Line */}
+          <div style={{ height: '1px', backgroundColor: 'rgba(80, 96, 108, 0.4)' }} />
         </div>
 
         {/* Agent List */}
         <div className="flex-1 overflow-y-auto p-2">
-          {agents.map((agent) => (
-            <button
-              key={agent.id}
-              onClick={() => setSelectedAgent(agent.id)}
-              className="w-full p-3 mb-1 rounded-xl flex items-center gap-3 transition-all duration-200"
-              style={{
-                backgroundColor: selectedAgent === agent.id ? 'rgba(80, 96, 108, 0.4)' : 'transparent',
-                height: '56px',
-              }}
-              onMouseEnter={(e) => {
-                if (selectedAgent !== agent.id) {
+          {/* Recent Chats Section */}
+          <div className="p-2">
+            <h3 className="mb-3 mt-2" style={{ color: 'rgba(251, 237, 224, 0.6)', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Recent Chats
+            </h3>
+            
+            {/* Recent Chat Items */}
+            <div className="space-y-1">
+              <button className="w-full p-3 rounded-xl flex items-center gap-3 transition-all duration-200 text-left" 
+                style={{ backgroundColor: 'transparent' }}
+                onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = 'rgba(80, 96, 108, 0.2)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (selectedAgent !== agent.id) {
+                }}
+                onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
-                }
-              }}
-            >
-              <div className="flex-1 text-left">
-                <div style={{ color: 'rgba(251, 237, 224, 0.9)', fontSize: '14px' }}>
-                  {agent.name}
+                }}
+              >
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'rgba(251, 237, 224, 0.3)' }} />
+                <div className="flex-1 min-w-0">
+                  <div style={{ color: 'rgba(251, 237, 224, 0.9)', fontSize: '14px' }} className="truncate">
+                    ETH Pricing...
+                  </div>
                 </div>
-                <div style={{ color: 'rgba(251, 237, 224, 0.6)', fontSize: '12px' }}>
-                  {agent.tag}
+              </button>
+              
+              <button className="w-full p-3 rounded-xl flex items-center gap-3 transition-all duration-200 text-left" 
+                style={{ backgroundColor: 'transparent' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(80, 96, 108, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'rgba(251, 237, 224, 0.3)' }} />
+                <div className="flex-1 min-w-0">
+                  <div style={{ color: 'rgba(251, 237, 224, 0.9)', fontSize: '14px' }} className="truncate">
+                    Bitcoin market...
+                  </div>
                 </div>
-              </div>
-            </button>
-          ))}
-        </div>
-
-        {/* New Chat Button */}
-        <div className="p-4 border-t" style={{ borderColor: 'rgba(80, 96, 108, 0.4)' }}>
-          <button
-            className="w-full px-4 py-2 rounded-xl flex items-center justify-center gap-2 transition-all duration-200"
-            style={{
-              border: '1px solid #FBede0',
-              backgroundColor: 'transparent',
-              color: '#FBede0',
-              fontSize: '14px',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#FBede0';
-              e.currentTarget.style.color = '#161823';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = '#FBede0';
-            }}
-          >
-            <Plus className="w-4 h-4" />
-            New Chat
-          </button>
+              </button>
+              
+              <button className="w-full p-3 rounded-xl flex items-center gap-3 transition-all duration-200 text-left" 
+                style={{ backgroundColor: 'transparent' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(80, 96, 108, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'rgba(251, 237, 224, 0.3)' }} />
+                <div className="flex-1 min-w-0">
+                  <div style={{ color: 'rgba(251, 237, 224, 0.9)', fontSize: '14px' }} className="truncate">
+                    Crypto investment suggestio...
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -237,14 +311,33 @@ export default function ChatPage() {
         </div>
 
         {/* Chat Messages Area */}
-        <div className="flex-1 overflow-y-auto px-6 py-6">
-          <div className="max-w-4xl mx-auto space-y-4">
-            {/* Divider */}
-            <div className="flex items-center gap-4 my-6">
-              <div className="flex-1" style={{ height: '1px', backgroundColor: 'rgba(80, 96, 108, 0.4)' }} />
-              <span style={{ color: 'rgba(251, 237, 224, 0.5)', fontSize: '12px' }}>Today</span>
-              <div className="flex-1" style={{ height: '1px', backgroundColor: 'rgba(80, 96, 108, 0.4)' }} />
-            </div>
+        <div className="flex-1 overflow-y-auto px-6 py-6 flex items-center justify-center">
+          <div className="max-w-4xl mx-auto space-y-4 w-full">
+            {/* Welcome Message with SplitText Animation - Only show when no messages */}
+            {messages.length === 0 && (
+              <div className="flex items-center justify-center min-h-[60vh]">
+                <div style={{ 
+                  color: '#FBede0', 
+                  fontSize: '48px', 
+                  fontWeight: 600,
+                  letterSpacing: '0.5px',
+                  textAlign: 'center'
+                }}>
+                  <SplitText 
+                    text="Hello, Are You Ready?"
+                    className="text-center"
+                    tag="h2"
+                    delay={100}
+                    duration={0.8}
+                    ease="power3.out"
+                    splitType="chars"
+                    from={{ opacity: 0, y: 50 }}
+                    to={{ opacity: 1, y: 0 }}
+                    onLetterAnimationComplete={() => {}}
+                  />
+                </div>
+              </div>
+            )}
 
             {messages.map((msg, index) => (
               <div
@@ -325,16 +418,28 @@ export default function ChatPage() {
 
         {/* Input Bar (Fixed Bottom) */}
         <div
-          className="px-6 py-3"
+          className="px-6"
           style={{
-            backgroundColor: '#1C1F2B',
-            borderTop: '1px solid #50606C',
-            height: '72px',
+            backgroundColor: '#161823',
+            height: '80px',
+            paddingTop: '16px',
+            paddingBottom: '16px',
+            marginBottom: '3cm',
           }}
         >
           <div className="max-w-4xl mx-auto flex items-center gap-3">
+            {/* Hidden File Input */}
+            <input
+              id="file-input"
+              type="file"
+              onChange={handleFileSelect}
+              style={{ display: 'none' }}
+              accept="/"
+            />
+            
             {/* Upload Button */}
             <button
+              onClick={handleAttachClick}
               className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200"
               style={{ backgroundColor: 'transparent' }}
               onMouseEnter={(e) => {
