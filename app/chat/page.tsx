@@ -36,14 +36,45 @@ export default function ChatPage() {
   const [selectedAgent, setSelectedAgent] = useState('crypto-agent');
   const [showInfoDrawer, setShowInfoDrawer] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const { messages, send, pending, error } = useAgentChat();
   const { address } = useAccount();
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   
   console.log('ChatPage - Session ID:', sessionId, 'Wallet:', address, 'Messages Count:', messages.length);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Scroll to bottom function
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      setShowScrollToBottom(false);
+    }
+  };
+
+  // Handle scroll events to show/hide scroll-to-bottom button
+  const handleScroll = () => {
+    if (messagesContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+      setShowScrollToBottom(!isNearBottom && messages.length > 0);
+    }
+  };
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (messagesContainerRef.current && messages.length > 0) {
+      const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+      
+      if (isNearBottom) {
+        scrollToBottom();
+      }
+    }
+  }, [messages]);
 
 
   if (!isMounted) {
@@ -100,6 +131,10 @@ export default function ChatPage() {
       const userMessage = message;
       setMessage('');
       send(userMessage, { sessionId, agent: selectedAgent, wallet: address });
+      // Scroll to bottom after sending message
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
     }
   };
 
@@ -311,7 +346,11 @@ export default function ChatPage() {
         </div>
 
         {/* Chat Messages Area */}
-        <div className="flex-1 overflow-y-auto px-6 py-6 flex items-center justify-center">
+        <div 
+          ref={messagesContainerRef}
+          onScroll={handleScroll}
+          className="flex-1 overflow-y-auto px-6 py-6 flex items-center justify-center relative"
+        >
           <div className="max-w-4xl mx-auto space-y-4 w-full">
             {/* Welcome Message with SplitText Animation - Only show when no messages */}
             {messages.length === 0 && (
@@ -415,6 +454,41 @@ export default function ChatPage() {
             )}
           </div>
         </div>
+
+        {/* Scroll to Bottom Button */}
+        {showScrollToBottom && (
+          <div className="absolute bottom-48 left-1/2 transform translate-x-8 z-20" style={{ marginLeft: '1cm' }}>
+            <button
+              onClick={scrollToBottom}
+              className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200"
+              style={{
+                backgroundColor: 'transparent',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
+            >
+              <svg 
+                width="32px" 
+                height="32px" 
+                viewBox="0 0 24 24" 
+                strokeWidth="1.5" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path 
+                  fillRule="evenodd" 
+                  clipRule="evenodd" 
+                  d="M12 1.25C17.9371 1.25 22.75 6.06294 22.75 12C22.75 17.9371 17.9371 22.75 12 22.75C6.06294 22.75 1.25 17.9371 1.25 12C1.25 6.06294 6.06294 1.25 12 1.25ZM9.03033 10.4697C8.73744 10.1768 8.26256 10.1768 7.96967 10.4697C7.67678 10.7626 7.67678 11.2374 7.96967 11.5303L11.4697 15.0303C11.7626 15.3232 12.2374 15.3232 12.5303 15.0303L16.0303 11.5303C16.3232 11.2374 16.3232 10.7626 16.0303 10.4697C15.7374 10.1768 15.2626 10.1768 14.9697 10.4697L12 13.4393L9.03033 10.4697Z" 
+                  fill="#FBede0"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
 
         {/* Input Bar (Fixed Bottom) */}
         <div

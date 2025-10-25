@@ -98,15 +98,15 @@ const AGENTS_DATA: Record<string, {
   totalQueries: string;
   successRate: string;
 }> = {
-  "1": {
-    id: "1",
-    name: 'Jotform AI',
-    category: 'Customer Service',
+  "bafybeibdofc5fnwiuvrzpr3ozu5x3ufccqme24ho4tbhn3e2xg4blrvo6i": {
+    id: "bafybeibdofc5fnwiuvrzpr3ozu5x3ufccqme24ho4tbhn3e2xg4blrvo6i",
+    name: 'Crypto Agent',
+    category: 'Agent',
     rating: 4.3,
     reviews: 2236,
-    price: '0.012 ETH/query',
-    description: 'Jotform AI Agents revolutionize customer service by automating support across multiple channels. These dynamic AI agents can instantly engage with customers and resolve queries.',
-    longDescription: 'Jotform AI Agents represent the next generation of customer service automation. Built on advanced natural language processing, these agents can understand context, sentiment, and intent to provide personalized support across chat, email, and social media platforms. The system learns from each interaction to continuously improve response quality and customer satisfaction.',
+    price: '0.019 ETH/query',
+    description: "I'm providing advanced cryptocurrency analysis and trading strategies quickly and professionally. I'll be happy to help you with your crypto trading.",
+    longDescription: 'Crypto Agent providing advanced cryptocurrency analysis and trading strategies quickly and professionally ,agents represent the next generation of customer service automation. Built on advanced natural language processing, these agents can understand context, sentiment, and intent to provide personalized support across chat, email, and social media platforms. The system learns from each interaction to continuously improve response quality and customer satisfaction.',
     trending: true,
     features: [
       'Multi-channel customer support automation',
@@ -121,8 +121,8 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '12,340',
     successRate: '97.2%'
   },
-  "2": {
-    id: "2",
+  "bafybeifj4k7l8m9n0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0": {
+    id: "bafybeifj4k7l8m9n0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0",
     name: 'Phala Network',
     category: 'Infrastructure',
     rating: 4.3,
@@ -144,8 +144,8 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '15,420',
     successRate: '98.5%'
   },
-  "3": {
-    id: "3",
+  "bafybeig3k52cgqhvaatvstf7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7ei": {
+    id: "bafybeig3k52cgqhvaatvstf7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7ei",
     name: 'AgentOps',
     category: 'Development',
     rating: 4.3,
@@ -167,8 +167,8 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '18,920',
     successRate: '96.8%'
   },
-  "4": {
-    id: "4",
+  "bafybeih2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6k": {
+    id: "bafybeih2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6k",
     name: 'Dify',
     category: 'Workflow',
     rating: 4.3,
@@ -190,8 +190,8 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '14,560',
     successRate: '95.4%'
   },
-  "5": {
-    id: "5",
+  "bafybeid7l8m9n0o1p2q3r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2": {
+    id: "bafybeid7l8m9n0o1p2q3r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2",
     name: 'Oovol',
     category: 'Testing',
     rating: 4.3,
@@ -213,8 +213,8 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '9,840',
     successRate: '98.1%'
   },
-  "6": {
-    id: "6",
+  "bafybeie9k3l4m5n6o7p8q9r0s1t2u3v4w5x6y7z8a9b0c1d2e3f4g5h6i7": {
+    id: "bafybeie9k3l4m5n6o7p8q9r0s1t2u3v4w5x6y7z8a9b0c1d2e3f4g5h6i7",
     name: 'Neets.ai',
     category: 'Voice',
     rating: 4.3,
@@ -236,8 +236,8 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '11,230',
     successRate: '94.7%'
   },
-  "7": {
-    id: "7",
+  "bafybeif5m6n7o8p9q0r1s2t3u4v5w6x7y8z9a0b1c2d3e4f5g6h7i8j9k0": {
+    id: "bafybeif5m6n7o8p9q0r1s2t3u4v5w6x7y8z9a0b1c2d3e4f5g6h7i8j9k0",
     name: 'Potpie AI',
     category: 'Code Assistant',
     rating: 4.3,
@@ -259,8 +259,8 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '16,720',
     successRate: '96.3%'
   },
-  "8": {
-    id: "8",
+  "bafybeig1n2o3p4q5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0g1h2i3j4k5l6": {
+    id: "bafybeig1n2o3p4q5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0g1h2i3j4k5l6",
     name: 'Jasper AI',
     category: 'Content',
     rating: 4.3,
@@ -282,8 +282,8 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '13,450',
     successRate: '95.8%'
   },
-  "9": {
-    id: "9",
+  "bafybeih7o8p9q0r1s2t3u4v5w6x7y8z9a0b1c2d3e4f5g6h7i8j9k0l1m2": {
+    id: "bafybeih7o8p9q0r1s2t3u4v5w6x7y8z9a0b1c2d3e4f5g6h7i8j9k0l1m2",
     name: 'PrivateAI',
     category: 'Security',
     rating: 4.3,
@@ -305,8 +305,8 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '8,920',
     successRate: '99.2%'
   },
-  "10": {
-    id: "10",
+  "bafybeid3p4q5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0g1h2i3j4k5l6m7n8": {
+    id: "bafybeid3p4q5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0g1h2i3j4k5l6m7n8",
     name: 'HyperWrite AI',
     category: 'Writing',
     rating: 4.3,
@@ -328,8 +328,8 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '14,890',
     successRate: '96.5%'
   },
-  "11": {
-    id: "11",
+  "bafybeie9q0r1s2t3u4v5w6x7y8z9a0b1c2d3e4f5g6h7i8j9k0l1m2n3o4": {
+    id: "bafybeie9q0r1s2t3u4v5w6x7y8z9a0b1c2d3e4f5g6h7i8j9k0l1m2n3o4",
     name: 'Nelima',
     category: 'Analytics',
     rating: 4.3,
@@ -351,8 +351,8 @@ const AGENTS_DATA: Record<string, {
     totalQueries: '10,560',
     successRate: '97.4%'
   },
-  "12": {
-    id: "12",
+  "bafybeif5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0g1h2i3j4k5l6m7n8o9p0": {
+    id: "bafybeif5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0g1h2i3j4k5l6m7n8o9p0",
     name: 'Vapi',
     category: 'Voice',
     rating: 4.3,
@@ -650,6 +650,27 @@ export default function AgentDetailsPage() {
               <div className="flex items-center justify-between hover:translate-x-1 transition-transform duration-300">
                 <span className="text-sm" style={{ color: '#5d606c' }}>Category</span>
                 <span className="text-sm font-medium" style={{ color: '#f8ede0' }}>{agent.category}</span>
+              </div>
+              <div className="flex items-center justify-between hover:translate-x-1 transition-transform duration-300">
+                <span className="text-sm" style={{ color: '#5d606c' }}>CID</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(String(agent.id));
+                      // Optional: Add visual feedback here
+                    }}
+                    className="flex items-center justify-center w-5 h-5 rounded hover:bg-[#5d606c] transition-colors duration-200"
+                    title="Copy CID"
+                  >
+                    <svg width="14px" height="14px" strokeWidth="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: '#5d606c' }}>
+                      <path d="M19.4 20H9.6C9.26863 20 9 19.7314 9 19.4V9.6C9 9.26863 9.26863 9 9.6 9H19.4C19.7314 9 20 9.26863 20 9.6V19.4C20 19.7314 19.7314 20 19.4 20Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                      <path d="M15 9V4.6C15 4.26863 14.7314 4 14.4 4H4.6C4.26863 4 4 4.26863 4 4.6V14.4C4 14.7314 4.26863 15 4.6 15H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                    </svg>
+                  </button>
+                  <span className="text-xs font-mono bg-gradient-to-r from-[#1C1F2B] to-[#161823] px-2 py-1 rounded border border-[#5d606c] max-w-[200px] truncate" style={{ color: '#f8ede0' }} title={String(agent.id)}>
+                    {String(agent.id).slice(0, 12)}...{String(agent.id).slice(-8)}
+                  </span>
+                </div>
               </div>
               <div className="flex items-center justify-between hover:translate-x-1 transition-transform duration-300">
                 <span className="text-sm" style={{ color: '#5d606c' }}>Rating</span>

@@ -12,7 +12,7 @@ type SortOption = 'name' | 'price' | 'rating' | 'users' | 'revenue';
 type SortDirection = 'asc' | 'desc';
 
 export default function MyAgentsPage() {
-  const [activeTab, setActiveTab] = useState<'subscribed' | 'created'>('subscribed');
+  const [activeTab, setActiveTab] = useState<'subscribed' | 'created'>('created');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
@@ -20,6 +20,41 @@ export default function MyAgentsPage() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0.001, 0.1]);
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [newlyCreatedAgent, setNewlyCreatedAgent] = useState<any>(null);
+
+  // Check if coming from successful upload
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const uploadSuccess = urlParams.get('uploadSuccess');
+    const agentName = urlParams.get('agentName') || 'Crypto Agent';
+    
+    if (uploadSuccess === 'true' && !newlyCreatedAgent) {
+      const cryptoAgent = {
+        id: Date.now(), // Unique ID
+        name: agentName,
+        creator: 'Your Company',
+        role: 'Crypto Agent',
+        category: 'Trading',
+        description: "I'm providing advanced cryptocurrency analysis and trading strategies quickly and professionally. I'll be happy to help you with your crypto trading.",
+        rating: 4.8,
+        reviews: 0,
+        users: 1,
+        revenue: '$0',
+        status: 'Active' as const,
+        price: 0.019,
+        experience: '1 year exp',
+        workType: 'Project work',
+        expiry: 'Active subscription',
+        avatar: '🤖',
+        trending: true,
+      };
+      setNewlyCreatedAgent(cryptoAgent);
+      setActiveTab('created'); // Switch to created tab to show the new agent
+      
+      // Clean URL
+      window.history.replaceState({}, '', '/agents');
+    }
+  }, [newlyCreatedAgent]);
 
   // Refs for click outside detection
   const sortMenuRef = useRef<HTMLDivElement>(null);
@@ -98,7 +133,7 @@ export default function MyAgentsPage() {
   ];
 
   // Mock data for created agents
-  const createdAgents = [
+  const baseCreatedAgents = [
     {
       id: 4,
       name: 'Data Analytics Bot',
@@ -138,6 +173,11 @@ export default function MyAgentsPage() {
       trending: true,
     },
   ];
+
+  // Include newly created agent if it exists
+  const createdAgents = newlyCreatedAgent 
+    ? [newlyCreatedAgent, ...baseCreatedAgents] 
+    : baseCreatedAgents;
 
   // Get all unique categories
   const allCategories = Array.from(
@@ -249,18 +289,18 @@ export default function MyAgentsPage() {
               if (selected) setActiveTab(selected);
             }}
           >
-            <Toggle id="subscribed" variant="outline" size="default" className="gap-2">
-              <Sparkles className="w-4 h-4" />
-              <span>Subscribed Agents</span>
-              <span className="ml-1 px-1.5 py-0.5 rounded-full bg-[#f8ede0]/10 text-[10px] font-semibold">
-                {subscribedAgents.length}
-              </span>
-            </Toggle>
             <Toggle id="created" variant="outline" size="default" className="gap-2">
               <Wrench className="w-4 h-4" />
               <span>Created Agents</span>
               <span className="ml-1 px-1.5 py-0.5 rounded-full bg-[#f8ede0]/10 text-[10px] font-semibold">
                 {createdAgents.length}
+              </span>
+            </Toggle>
+            <Toggle id="subscribed" variant="outline" size="default" className="gap-2">
+              <Sparkles className="w-4 h-4" />
+              <span>Subscribed Agents</span>
+              <span className="ml-1 px-1.5 py-0.5 rounded-full bg-[#f8ede0]/10 text-[10px] font-semibold">
+                {subscribedAgents.length}
               </span>
             </Toggle>
           </ToggleButtonGroup>

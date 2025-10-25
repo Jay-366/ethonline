@@ -23,17 +23,17 @@ interface Agent {
 // Move agents data outside component to prevent recreation
 const AGENTS_DATA: Agent[] = [
   {
-    id: "1",
-    name: 'Jotform AI',
-    category: 'Customer Service',
+    id: "bafybeibdofc5fnwiuvrzpr3ozu5x3ufccqme24ho4tbhn3e2xg4blrvo6i",
+    name: 'Crypto Agent',
+    category: 'Agent',
     rating: 4.3,
     reviews: 2236,
-    price: 0.012,
-    description: 'Jotform AI Agents revolutionize customer service by automating support across multiple channels. These dynamic AI agents can instantly engage with customers and resolve queries.',
+    price: 0.019,
+    description:  "I'm providing advanced cryptocurrency analysis and trading strategies quickly and professionally. I'll be happy to help you with your crypto trading.",
     trending: true,
   },
   {
-    id: "2",
+    id: "bafybeig3k52cgqhvaatvstf7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7ei",
     name: 'Phala Network',
     category: 'Infrastructure',
     rating: 4.3,
@@ -43,7 +43,7 @@ const AGENTS_DATA: Agent[] = [
     trending: true,
   },
   {
-    id: "3",
+    id: "bafybeifh7vn89xk2pqlwrtc3mbf9g8sjkxnp6qqme8rwjrmh4sx8de2qp9",
     name: 'AgentOps',
     category: 'Development',
     rating: 4.3,
@@ -53,7 +53,7 @@ const AGENTS_DATA: Agent[] = [
     trending: true,
   },
   {
-    id: "4",
+    id: "bafybeiq9m3kx7p2vwrtf5jhqnpuqqme7cwjrmhs4x8de2qp9s7eifh7vn8",
     name: 'Dify',
     category: 'Workflow',
     rating: 4.3,
@@ -63,7 +63,7 @@ const AGENTS_DATA: Agent[] = [
     trending: true,
   },
   {
-    id: "5",
+    id: "bafybeir2p9s7eifh7vn89xk2pqlwrtc3mbf9g8sjkxnpuqqme8rwjrmh4s",
     name: 'Oovol',
     category: 'Testing',
     rating: 4.3,
@@ -73,7 +73,7 @@ const AGENTS_DATA: Agent[] = [
     trending: false,
   },
   {
-    id: "6",
+    id: "bafybeisk2cgqhvaatvstf7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7eifh7",
     name: 'Neets.ai',
     category: 'Voice',
     rating: 4.3,
@@ -83,7 +83,7 @@ const AGENTS_DATA: Agent[] = [
     trending: false,
   },
   {
-    id: "7",
+    id: "bafybeit7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrt",
     name: 'Potpie AI',
     category: 'Code Assistant',
     rating: 4.3,
@@ -93,7 +93,7 @@ const AGENTS_DATA: Agent[] = [
     trending: false,
   },
   {
-    id: "8",
+    id: "bafybeiu3mbf9g8sjkxnp6qqme8rwjrmh4sx8de2qp9s7eifh7vn89xk2pq",
     name: 'Jasper AI',
     category: 'Content',
     rating: 4.3,
@@ -103,7 +103,7 @@ const AGENTS_DATA: Agent[] = [
     trending: false,
   },
   {
-    id: "9",
+    id: "bafybeiv5jhqnpuqqme7cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrtc3m",
     name: 'PrivateAI',
     category: 'Security',
     rating: 4.3,
@@ -113,7 +113,7 @@ const AGENTS_DATA: Agent[] = [
     trending: false,
   },
   {
-    id: "10",
+    id: "bafybeiw8sjkxnpuqqme9cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrtc3",
     name: 'HyperWrite AI',
     category: 'Writing',
     rating: 4.3,
@@ -123,7 +123,7 @@ const AGENTS_DATA: Agent[] = [
     trending: false,
   },
   {
-    id: "11",
+    id: "bafybeix6qqme8rwjrmh4sx8de2qp9s7eifh7vn89xk2pqlwrtc3mbf9g8s",
     name: 'Nelima',
     category: 'Analytics',
     rating: 4.3,
@@ -133,7 +133,7 @@ const AGENTS_DATA: Agent[] = [
     trending: false,
   },
   {
-    id: "12",
+    id: "bafybeiy9cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrtc3mbf9g8sjkxnp",
     name: 'Vapi',
     category: 'Voice',
     rating: 4.3,
@@ -239,17 +239,17 @@ export default function MarketplacePage() {
                 rating={agent.rating}
                 reviews={agent.reviews || 0}
                 tags={
-                  agent.id === '1' ? ['Customer Service', '+2'] :
-                  agent.id === '2' ? ['Infrastructure', '+2'] :
-                  agent.id === '3' ? ['Development', '+2'] :
-                  agent.id === '4' ? ['Workflow', '+2'] :
-                  agent.id === '5' ? ['Testing', '+2'] :
-                  agent.id === '6' ? ['Voice', '+2'] :
-                  agent.id === '7' ? ['Code Assistant', '+2'] :
-                  agent.id === '8' ? ['Content', '+2'] :
-                  agent.id === '9' ? ['Security', '+2'] :
-                  agent.id === '10' ? ['Writing', '+2'] :
-                  agent.id === '11' ? ['Analytics', '+2'] :
+                  agent.id === 'bafybeibdofc5fnwiuvrzpr3ozu5x3ufccqme24ho4tbhn3e2xg4blrvo6i' ? ['Customer Service', '+2'] :
+                  agent.id === 'bafybeig3k52cgqhvaatvstf7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7ei' ? ['Infrastructure', '+2'] :
+                  agent.id === 'bafybeifh7vn89xk2pqlwrtc3mbf9g8sjkxnp6qqme8rwjrmh4sx8de2qp9' ? ['Development', '+2'] :
+                  agent.id === 'bafybeiq9m3kx7p2vwrtf5jhqnpuqqme7cwjrmhs4x8de2qp9s7eifh7vn8' ? ['Workflow', '+2'] :
+                  agent.id === 'bafybeir2p9s7eifh7vn89xk2pqlwrtc3mbf9g8sjkxnpuqqme8rwjrmh4s' ? ['Testing', '+2'] :
+                  agent.id === 'bafybeisk2cgqhvaatvstf7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7eifh7' ? ['Voice', '+2'] :
+                  agent.id === 'bafybeit7jhqmkxnpuqqme9cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrt' ? ['Code Assistant', '+2'] :
+                  agent.id === 'bafybeiu3mbf9g8sjkxnp6qqme8rwjrmh4sx8de2qp9s7eifh7vn89xk2pq' ? ['Content', '+2'] :
+                  agent.id === 'bafybeiv5jhqnpuqqme7cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrtc3m' ? ['Security', '+2'] :
+                  agent.id === 'bafybeiw8sjkxnpuqqme9cwjrmhs4x8de2qp9s7eifh7vn89xk2pqlwrtc3' ? ['Writing', '+2'] :
+                  agent.id === 'bafybeix6qqme8rwjrmh4sx8de2qp9s7eifh7vn89xk2pqlwrtc3mbf9g8s' ? ['Analytics', '+2'] :
                   ['Voice', '+2']
                 }
                 price={typeof agent.price === 'number' ? `${agent.price} ETH/mon` : agent.price}

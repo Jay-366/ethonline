@@ -212,6 +212,12 @@ export default function CreateAgentPage() {
       setUploadSuccess(true);
       setCid(cid);
       
+      // Redirect to agents page with success parameters after a short delay
+      setTimeout(() => {
+        const agentNameParam = encodeURIComponent(agentName || 'Crypto Agent');
+        window.location.href = `/agents?uploadSuccess=true&agentName=${agentNameParam}`;
+      }, 2000);
+      
     } catch (error) {
       console.error('Lighthouse upload failed:', error);
       setLighthouseStatus({ 
