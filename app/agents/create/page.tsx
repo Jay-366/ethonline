@@ -3,6 +3,7 @@
 import { Upload, Check, Copy, ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Timeline } from '@/components/ui/timeline';
 import FileUpload from '@/components/ui/file-upload';
 
@@ -24,6 +25,8 @@ export default function CreateAgentPage() {
   const [copied, setCopied] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [selectedNetwork, setSelectedNetwork] = useState('');
+  const [showNetworkDropdown, setShowNetworkDropdown] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [lighthouseStatus, setLighthouseStatus] = useState<{
     step: 'idle' | 'encrypting' | 'applying-conditions' | 'success' | 'error';
@@ -34,6 +37,7 @@ export default function CreateAgentPage() {
   }>({ step: 'idle', message: '', encryptionComplete: false });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
+  const networkDropdownRef = useRef<HTMLDivElement>(null);
 
   const categories = ['Trading', 'Research', 'Writing', 'Analytics', 'DeFi', 'NFT', 'Gaming', 'Social', 'Data Analysis', 'Content Creation'];
 
@@ -47,6 +51,9 @@ export default function CreateAgentPage() {
     function handleClickOutside(event: MouseEvent) {
       if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target as Node)) {
         setShowCategoryDropdown(false);
+      }
+      if (networkDropdownRef.current && !networkDropdownRef.current.contains(event.target as Node)) {
+        setShowNetworkDropdown(false);
       }
     }
 
@@ -85,8 +92,13 @@ export default function CreateAgentPage() {
     }
     
     // Validate pricing based on selected options
-    if (selectedAccessOptions.includes('subscribers') && !monthlyPrice.trim()) {
-      errors.push('Monthly price is required for Subscribers option');
+    if (selectedAccessOptions.includes('subscribers')) {
+      if (!selectedNetwork) {
+        errors.push('Network selection is required for Subscribers option');
+      }
+      if (!monthlyPrice.trim()) {
+        errors.push('Monthly price is required for Subscribers option');
+      }
     }
     if (selectedAccessOptions.includes('payperuse') && !payPerUsePrice.trim()) {
       errors.push('Price per session is required for Pay-Per-Use option');
@@ -424,24 +436,202 @@ export default function CreateAgentPage() {
                   </p>
 
                   {selectedAccessOptions.includes('subscribers') && (
-                    <div onClick={(e) => e.stopPropagation()}>
-                      <label className="block mb-2 text-sm text-[#f8ede0]">
-                        Monthly Subscription Price (ETH)
-                      </label>
-                      <input
-                        type="text"
-                        value={monthlyPrice}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/[^0-9.]/g, '');
-                          setMonthlyPrice(value);
-                        }}
-                        placeholder="e.g. 0.019"
-                        className="h-11 px-4 rounded-md outline-none transition-all duration-300 bg-transparent border border-[#5d606c] text-[#f8ede0] placeholder-[#5d606c] focus:border-[#f8ede0] hover:border-[#f8ede0]/60"
-                        style={{ width: '200px' }}
-                      />
-                      <p className="mt-2 text-sm text-[#5d606c]">
-                        Renewal every 30 days • Access verified via subscription contract.
-                      </p>
+                    <div onClick={(e) => e.stopPropagation()} className="space-y-4">
+                      {/* Network Selection */}
+                      <div>
+                        <label className="block mb-2 text-sm text-[#f8ede0]">
+                          Select Network <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative" ref={networkDropdownRef}>
+                          <button
+                            onClick={() => setShowNetworkDropdown(!showNetworkDropdown)}
+                            className="w-full h-11 px-4 rounded-md outline-none transition-all duration-300 bg-transparent border border-[#5d606c] text-left flex items-center justify-between hover:border-[#f8ede0]/60"
+                            style={{ color: selectedNetwork ? '#f8ede0' : '#5d606c' }}
+                          >
+                            <div className="flex items-center gap-3">
+                              {selectedNetwork && (
+                                <div className="w-12 h-12 flex items-center justify-center">
+                                  {selectedNetwork === 'Sepolia' && (
+                                    <Image 
+                                      src="/chain/sepolia.png" 
+                                      alt="Sepolia" 
+                                      width={48} 
+                                      height={48} 
+                                      className="rounded-full"
+                                    />
+                                  )}
+                                  {selectedNetwork === 'Base Sepolia' && (
+                                    <Image 
+                                      src="/chain/base-sepolia.png" 
+                                      alt="Base Sepolia" 
+                                      width={48} 
+                                      height={48} 
+                                      className="rounded-full"
+                                    />
+                                  )}
+                                  {selectedNetwork === 'Arbitrum Sepolia' && (
+                                    <Image 
+                                      src="/chain/arbitrum.png" 
+                                      alt="Arbitrum Sepolia" 
+                                      width={48} 
+                                      height={48} 
+                                      className="rounded-full"
+                                    />
+                                  )}
+                                  {selectedNetwork === 'Monad Testnet' && (
+                                    <Image 
+                                      src="/chain/monad.png" 
+                                      alt="Monad Testnet" 
+                                      width={48} 
+                                      height={48} 
+                                      className="rounded-full"
+                                    />
+                                  )}
+                                  {selectedNetwork === 'Polygon Amoy' && (
+                                    <Image 
+                                      src="/chain/polygon.png" 
+                                      alt="Polygon Amoy" 
+                                      width={48} 
+                                      height={48} 
+                                      className="rounded-full"
+                                    />
+                                  )}
+                                  {selectedNetwork === 'OP Sepolia' && (
+                                    <Image 
+                                      src="/chain/opitimism.png" 
+                                      alt="OP Sepolia" 
+                                      width={48} 
+                                      height={48} 
+                                      className="rounded-full"
+                                    />
+                                  )}
+                                </div>
+                              )}
+                              <span>{selectedNetwork || 'Choose network'}</span>
+                            </div>
+                            <ChevronDown className="w-4 h-4" />
+                          </button>
+                          
+                          {showNetworkDropdown && (
+                            <div className="absolute top-full left-0 mt-2 w-full bg-[#1C1F2B] border border-[#5d606c] rounded-md shadow-lg z-20 max-h-64 overflow-y-auto">
+                              <div className="py-2">
+                                {[
+                                  { name: 'Sepolia', color: '#627EEA', status: 'Connected' },
+                                  { name: 'Base Sepolia', color: '#0052FF', status: null },
+                                  { name: 'Arbitrum Sepolia', color: '#28A0F0', status: null },
+                                  { name: 'Monad Testnet', color: '#9333EA', status: null },
+                                  { name: 'Polygon Amoy', color: '#8247E5', status: null },
+                                  { name: 'OP Sepolia', color: '#FF0420', status: null }
+                                ].map((network) => (
+                                  <button
+                                    key={network.name}
+                                    onClick={() => {
+                                      setSelectedNetwork(network.name);
+                                      setShowNetworkDropdown(false);
+                                    }}
+                                    className="w-full text-left px-4 py-3 text-sm transition-colors flex items-center justify-between hover:bg-[rgba(93,96,108,0.3)]"
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-10 h-10 flex items-center justify-center">
+                                        {network.name === 'Sepolia' && (
+                                          <Image 
+                                            src="/chain/sepolia.png" 
+                                            alt="Sepolia" 
+                                            width={40} 
+                                            height={40} 
+                                            className="rounded-full"
+                                          />
+                                        )}
+                                        {network.name === 'Base Sepolia' && (
+                                          <Image 
+                                            src="/chain/base-sepolia.png" 
+                                            alt="Base Sepolia" 
+                                            width={40} 
+                                            height={40} 
+                                            className="rounded-full"
+                                          />
+                                        )}
+                                        {network.name === 'Arbitrum Sepolia' && (
+                                          <Image 
+                                            src="/chain/arbitrum.png" 
+                                            alt="Arbitrum Sepolia" 
+                                            width={40} 
+                                            height={40} 
+                                            className="rounded-full"
+                                          />
+                                        )}
+                                        {network.name === 'Monad Testnet' && (
+                                          <Image 
+                                            src="/chain/monad.png" 
+                                            alt="Monad Testnet" 
+                                            width={40} 
+                                            height={40} 
+                                            className="rounded-full"
+                                          />
+                                        )}
+                                        {network.name === 'Polygon Amoy' && (
+                                          <Image 
+                                            src="/chain/polygon.png" 
+                                            alt="Polygon Amoy" 
+                                            width={40} 
+                                            height={40} 
+                                            className="rounded-full"
+                                          />
+                                        )}
+                                        {network.name === 'OP Sepolia' && (
+                                          <Image 
+                                            src="/chain/opitimism.png" 
+                                            alt="OP Sepolia" 
+                                            width={40} 
+                                            height={40} 
+                                            className="rounded-full"
+                                          />
+                                        )}
+                                      </div>
+                                      <span className="text-[#f8ede0]">{network.name}</span>
+                                    </div>
+                                    {network.status && (
+                                      <div className="flex items-center gap-1">
+                                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                                        <span className="text-xs text-green-400">{network.status}</span>
+                                      </div>
+                                    )}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Subscription Price */}
+                      <div>
+                        <label className="block mb-2 text-sm text-[#f8ede0]">
+                          Monthly Subscription Price (USDC)
+                        </label>
+                        <input
+                          type="text"
+                          value={monthlyPrice}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^0-9.]/g, '');
+                            setMonthlyPrice(value);
+                          }}
+                          placeholder="e.g. 3-10"
+                          className="h-11 px-4 rounded-md outline-none transition-all duration-300 bg-transparent border border-[#5d606c] text-[#f8ede0] placeholder-[#5d606c] focus:border-[#f8ede0] hover:border-[#f8ede0]/60"
+                          style={{ width: '200px' }}
+                          disabled={!selectedNetwork}
+                        />
+                        {!selectedNetwork && (
+                          <p className="mt-1 text-xs text-[#5d606c]">
+                            Please select a network first
+                          </p>
+                        )}
+                        {selectedNetwork && (
+                          <p className="mt-2 text-sm text-[#5d606c]">
+                            Renewal every 30 days on {selectedNetwork} • Access verified via subscription contract.
+                          </p>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>

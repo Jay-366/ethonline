@@ -104,7 +104,7 @@ const AGENTS_DATA: Record<string, {
     category: 'Agent',
     rating: 4.3,
     reviews: 2236,
-    price: '0.019 ETH/query',
+    price: '0.019 ETH/Sub',
     description: "I'm providing advanced cryptocurrency analysis and trading strategies quickly and professionally. I'll be happy to help you with your crypto trading.",
     longDescription: 'Crypto Agent providing advanced cryptocurrency analysis and trading strategies quickly and professionally ,agents represent the next generation of customer service automation. Built on advanced natural language processing, these agents can understand context, sentiment, and intent to provide personalized support across chat, email, and social media platforms. The system learns from each interaction to continuously improve response quality and customer satisfaction.',
     trending: true,
@@ -127,7 +127,7 @@ const AGENTS_DATA: Record<string, {
     category: 'Infrastructure',
     rating: 4.3,
     reviews: 2236,
-    price: '0.009 ETH/query',
+    price: '0.009 ETH/Sub',
     description: 'Secure, trustless AI computing without compromise. Deploy AI agents on decentralized infrastructure with built-in privacy protection.',
     longDescription: 'Phala Network provides a decentralized cloud computing infrastructure specifically designed for AI agents. Using Trusted Execution Environments (TEE), Phala ensures that your AI computations remain private and secure while maintaining verifiability. This unique approach enables developers to build confidential AI applications without trusting centralized cloud providers.',
     trending: true,
@@ -150,7 +150,7 @@ const AGENTS_DATA: Record<string, {
     category: 'Development',
     rating: 4.3,
     reviews: 2236,
-    price: '0.012 ETH/query',
+    price: '0.012 ETH/Sub',
     description: 'Unleash reliable AI agents with comprehensive testing and optimization. Monitor, debug, and improve your AI agent performance in production.',
     longDescription: 'AgentOps is the complete DevOps platform for AI agents. It provides end-to-end observability, testing frameworks, and optimization tools to ensure your AI agents perform reliably in production. With built-in monitoring, debugging, and A/B testing capabilities, AgentOps helps teams ship better AI products faster.',
     trending: true,
@@ -173,7 +173,7 @@ const AGENTS_DATA: Record<string, {
     category: 'Workflow',
     rating: 4.3,
     reviews: 2236,
-    price: '0.012 ETH/query',
+    price: '0.012 ETH/Sub',
     description: 'Build powerful AI agents and workflows in minutes. Visual agent builder with pre-built templates and integrations.',
     longDescription: 'Dify empowers teams to build sophisticated AI agents without extensive coding. Its visual workflow builder combines the power of large language models with an intuitive interface, enabling rapid prototyping and deployment. With pre-built templates and extensive integrations, Dify accelerates AI agent development from concept to production.',
     trending: true,
@@ -196,7 +196,7 @@ const AGENTS_DATA: Record<string, {
     category: 'Testing',
     rating: 4.3,
     reviews: 2236,
-    price: '0.012 ETH/query',
+    price: '0.012 ETH/Sub',
     description: 'Ship reliable AI agents faster with comprehensive simulation and testing environments before deployment.',
     longDescription: 'Oovol provides enterprise-grade testing and simulation environments for AI agents. Create realistic test scenarios, simulate edge cases, and validate agent behavior before production deployment. With automated regression testing and performance benchmarking, Oovol ensures your agents meet quality standards consistently.',
     trending: false,
@@ -219,7 +219,7 @@ const AGENTS_DATA: Record<string, {
     category: 'Voice',
     rating: 4.3,
     reviews: 2236,
-    price: '0.018 ETH/query',
+    price: '0.018 ETH/Sub',
     description: 'Build powerful voice AI agents with natural conversations. Real-time speech processing and multi-language support.',
     longDescription: 'Neets.ai specializes in voice-enabled AI agents with human-like conversational abilities. Leveraging advanced speech synthesis and recognition technologies, Neets.ai enables developers to create voice agents that understand context, detect emotions, and respond naturally across multiple languages.',
     trending: false,
@@ -242,7 +242,7 @@ const AGENTS_DATA: Record<string, {
     category: 'Code Assistant',
     rating: 4.3,
     reviews: 2239,
-    price: '0.012 ETH/query',
+    price: '0.012 ETH/Sub',
     description: 'Build custom AI coding agents that understand your entire codebase. Automated code review, bug detection, and documentation.',
     longDescription: 'Potpie AI revolutionizes software development with intelligent coding agents that understand your entire codebase. From automated code reviews to intelligent refactoring suggestions, Potpie AI helps development teams maintain code quality while accelerating delivery. The agents learn your coding patterns and best practices to provide personalized assistance.',
     trending: false,
@@ -265,7 +265,7 @@ const AGENTS_DATA: Record<string, {
     category: 'Content',
     rating: 4.3,
     reviews: 2236,
-    price: '0.012 ETH/query',
+    price: '0.012 ETH/Sub',
     description: 'AI-powered content agents that transform how teams create and execute marketing content at scale.',
     longDescription: 'Jasper AI empowers marketing teams with AI agents specialized in content creation. From blog posts to social media campaigns, Jasper AI understands brand voice, target audiences, and content strategies to produce engaging, on-brand content at scale. Built-in SEO optimization and multi-platform adaptation ensure maximum content effectiveness.',
     trending: false,
@@ -288,7 +288,7 @@ const AGENTS_DATA: Record<string, {
     category: 'Security',
     rating: 4.3,
     reviews: 2236,
-    price: '0.018 ETH/query',
+    price: '0.018 ETH/Sub',
     description: 'Secure AI-powered privacy protection agents for sensitive data. Enterprise-grade encryption and compliance.',
     longDescription: 'PrivateAI delivers enterprise-grade security for AI agents handling sensitive data. With end-to-end encryption, compliance frameworks (GDPR, HIPAA, SOC2), and advanced threat detection, PrivateAI ensures that your AI operations meet the highest security standards. Ideal for healthcare, finance, and regulated industries.',
     trending: false,
@@ -311,7 +311,7 @@ const AGENTS_DATA: Record<string, {
     category: 'Writing',
     rating: 4.3,
     reviews: 2239,
-    price: '0.012 ETH/query',
+    price: '0.012 ETH/Sub',
     description: 'Build custom writing AI agents with your brand voice. Automated content generation, editing, and optimization.',
     longDescription: 'HyperWrite AI provides specialized writing agents that adapt to your unique style and requirements. Whether you need technical documentation, creative writing, or business communications, HyperWrite AI learns your preferences and produces high-quality content that matches your voice. Advanced editing and optimization features ensure polished, professional results.',
     trending: false,
@@ -334,7 +334,7 @@ const AGENTS_DATA: Record<string, {
     category: 'Analytics',
     rating: 4.3,
     reviews: 2236,
-    price: '0.012 ETH/query',
+    price: '0.012 ETH/Sub',
     description: 'Intelligent AI analytics agents transforming data into strategic insights with automated reporting and predictions.',
     longDescription: 'Nelima transforms raw data into actionable intelligence with AI agents specialized in analytics and business intelligence. From automated data analysis to predictive modeling, Nelima helps organizations make data-driven decisions faster. The platform integrates with popular data sources and provides natural language insights that everyone can understand.',
     trending: false,
@@ -357,7 +357,7 @@ const AGENTS_DATA: Record<string, {
     category: 'Voice',
     rating: 4.3,
     reviews: 2236,
-    price: '0.018 ETH/query',
+    price: '0.018 ETH/Sub',
     description: 'Ship reliable voice AI agents faster with comprehensive simulation and testing for conversational interfaces.',
     longDescription: 'Vapi accelerates voice AI development with comprehensive tools for building, testing, and deploying conversational agents. Its simulation environment lets you test thousands of conversation scenarios before going live, ensuring your voice agents handle real-world interactions gracefully. Built-in analytics help optimize conversation flows for better user experiences.',
     trending: false,
@@ -380,6 +380,10 @@ export default function AgentDetailsPage() {
   const params = useParams();
   const agentId = params.id as string;
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+  const [decrypting, setDecrypting] = useState(false);
+  const [decryptedFileUrl, setDecryptedFileUrl] = useState<string | null>(null);
+  const [decryptedFileName, setDecryptedFileName] = useState<string | null>(null);
+  const [decryptError, setDecryptError] = useState<string | null>(null);
   const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
@@ -636,7 +640,7 @@ export default function AgentDetailsPage() {
                 {agent.price}
               </div>
               <div className="text-sm" style={{ color: '#5d606c' }}>
-                per query
+                subscribed
               </div>
             </div>
 
@@ -732,8 +736,84 @@ export default function AgentDetailsPage() {
                 }}
               >
                 <DollarSign className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
-                Buy Credits
+                Subscribe
               </button>
+              {/* Decrypt button - calls server to get signed message, encryption key and attempt decrypt */}
+              <button
+                onClick={async () => {
+                  // prevent double actions
+                  if (decrypting) return;
+                  setDecryptError(null);
+                  setDecrypting(true);
+                  try {
+                    const res = await fetch('/api/lighthouse', {
+                      method: 'PATCH',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ cid: String(agent.id), fileName: `${agent.name}.bin` }),
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data?.error || 'Decrypt request failed');
+
+                    if (data.fileBase64) {
+                      // convert base64 to blob and create object URL
+                      const b64 = data.fileBase64 as string;
+                      const binary = atob(b64);
+                      const len = binary.length;
+                      const bytes = new Uint8Array(len);
+                      for (let i = 0; i < len; i++) {
+                        bytes[i] = binary.charCodeAt(i);
+                      }
+                      const blob = new Blob([bytes], { type: 'application/octet-stream' });
+                      const url = URL.createObjectURL(blob);
+                      setDecryptedFileUrl(url);
+                      setDecryptedFileName(data.fileName || `${agent.name}.bin`);
+                    } else if (data.encryptionKey) {
+                      // Received encryption key but server didn't decrypt file
+                      setDecryptError('Encryption key returned (no server-side decrypt available).');
+                      // Optionally copy key to clipboard for manual decryption
+                      try { await navigator.clipboard.writeText(String(data.encryptionKey)); } catch (e) {}
+                    } else {
+                      setDecryptError('Decrypt endpoint returned no file and no key.');
+                    }
+                  } catch (err: any) {
+                    setDecryptError(err?.message || String(err));
+                  } finally {
+                    setDecrypting(false);
+                  }
+                }}
+                className="w-full mt-2 px-6 py-3 rounded-md transition-all duration-300 flex items-center justify-center gap-2 text-sm font-medium relative overflow-hidden group"
+                style={{
+                  backgroundColor: 'transparent',
+                  border: '1px solid #5d606c',
+                  color: '#f8ede0',
+                }}
+                title="Decrypt file"
+              >
+                {decrypting ? (
+                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                )}
+                {decrypting ? 'Decrypting...' : 'Decrypt'}
+              </button>
+
+              {/* Download button shown when decrypted file is available */}
+              {decryptedFileUrl && (
+                <a
+                  href={decryptedFileUrl}
+                  download={decryptedFileName ?? `${agent.name}.bin`}
+                  className="w-full mt-2 inline-block text-center px-6 py-3 rounded-md bg-[#f8ede0] text-[#161823] font-medium"
+                >
+                  Download Decrypted File
+                </a>
+              )}
+
+              {decryptError && (
+                <div className="text-xs text-red-400 mt-2">{decryptError}</div>
+              )}
             </div>
           </div>
         </div>

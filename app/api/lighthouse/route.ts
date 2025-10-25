@@ -238,3 +238,178 @@ export async function PUT(request: NextRequest) {
     )
   }
 }
+
+// File type detection based on magic bytes/signatures - using proven working approach
+const detectFileType = (buffer: Buffer): { extension: string; mimeType: string } => {
+  let fileExtension = 'bin';
+  let mimeType = 'application/octet-stream';
+  
+  // Simple file type detection based on file headers
+  if (buffer.length > 0) {
+    const header = buffer.subarray(0, 16).toString('hex');
+    console.log('File header (hex):', header);
+    
+    if (header.startsWith('89504e47')) {
+      fileExtension = 'png';
+      mimeType = 'image/png';
+    } else if (header.startsWith('ffd8ff')) {
+      fileExtension = 'jpg';
+      mimeType = 'image/jpeg';
+    } else if (header.startsWith('474946')) {
+      fileExtension = 'gif';
+      mimeType = 'image/gif';
+    } else if (header.startsWith('25504446')) {
+      fileExtension = 'pdf';
+      mimeType = 'application/pdf';
+    } else if (header.startsWith('504b0304') || header.startsWith('504b0506') || header.startsWith('504b0708')) {
+      fileExtension = 'zip';
+      mimeType = 'application/zip';
+    } else if (header.startsWith('1f8b08')) {
+      fileExtension = 'gz';
+      mimeType = 'application/gzip';
+    } else if (header.startsWith('425a68') || header.startsWith('425a')) {
+      fileExtension = 'bz2';
+      mimeType = 'application/x-bzip2';
+    } else if (header.startsWith('377abcaf271c') || header.startsWith('fd377a585a00')) {
+      fileExtension = 'xz';
+      mimeType = 'application/x-xz';
+    } else if (buffer.length >= 512) {
+      // Check for TAR file signature
+      const tarCheck = buffer.subarray(257, 262).toString('ascii');
+      if (tarCheck === 'ustar' || tarCheck.startsWith('ustar')) {
+        fileExtension = 'tar';
+        mimeType = 'application/x-tar';
+      } else {
+        // Alternative TAR detection
+        const possibleFilename = buffer.subarray(0, 100).toString('ascii').replace(/\0.*$/, '');
+        const hasNullPadding = buffer.subarray(100, 156).every(byte => byte === 0 || (byte >= 32 && byte <= 126));
+        if (possibleFilename.length > 0 && hasNullPadding) {
+          fileExtension = 'tar';
+          mimeType = 'application/x-tar';
+        }
+      }
+    }
+    
+    // Text file detection (moved to end to avoid false positives)
+    if (fileExtension === 'bin') {
+      if (buffer.toString('utf8', 0, Math.min(100, buffer.length)).includes('<!DOCTYPE html') || 
+          buffer.toString('utf8', 0, Math.min(100, buffer.length)).includes('<html')) {
+        fileExtension = 'html';
+        mimeType = 'text/html';
+      } else {
+        // Check if it looks like text
+        const sample = buffer.toString('utf8', 0, Math.min(1000, buffer.length));
+        const printableRatio = (sample.match(/[\x20-\x7E\n\r\t]/g) || []).length / sample.length;
+        if (printableRatio > 0.8) {
+          fileExtension = 'txt';
+          mimeType = 'text/plain';
+        }
+      }
+    }
+  }
+  
+  console.log(`Detected file type: ${fileExtension} (${mimeType})`);
+  return { extension: fileExtension, mimeType: mimeType };
+}
+
+// For getting encryption key - following docs exactly
+const signAuthMessageForEncryption = async (privateKey: string) => {
+  const signer = new ethers.Wallet(privateKey)
+  const authResponse = await lighthouse.getAuthMessage(signer.address)
+  if (!authResponse || !authResponse.data || !authResponse.data.message) {
+    throw new Error('Failed to get auth message from lighthouse')
+  }
+  const messageRequested = authResponse.data.message
+  const signedMessage = await signer.signMessage(messageRequested)
+  return signedMessage
+}
+
+// PATCH: Decrypt file (get signed message -> get encryption key -> attempt decrypt)
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const cid = body.cid as string | undefined;
+    const fileName = body.fileName as string | undefined;
+
+    if (!cid) {
+      return NextResponse.json({ error: 'CID is required' }, { status: 400 });
+    }
+
+    const privateKey = process.env.WALLET_PRIVATE_KEY;
+    const publicKey = process.env.WALLET_PUBLIC_KEY;
+
+    if (!privateKey || !publicKey) {
+      return NextResponse.json({ error: 'WALLET_PRIVATE_KEY and WALLET_PUBLIC_KEY must be set' }, { status: 500 });
+    }
+
+    // Sign auth message following the docs exactly
+    const signedMessage = await signAuthMessageForEncryption(privateKey);
+
+    // Get encryption key following docs: fetchEncryptionKey(cid, publicKey, signedMessage)
+    let encryptionKeyResponse: any = null;
+    try {
+      encryptionKeyResponse = await lighthouse.fetchEncryptionKey(
+        cid,
+        publicKey,
+        signedMessage
+      );
+      console.log('Encryption key response:', encryptionKeyResponse);
+    } catch (err) {
+      console.error('Failed to get encryption key:', err);
+      return NextResponse.json({ error: 'Failed to get encryption key', detail: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    }
+
+    // Extract the actual key from response.data.key
+    const encryptionKey = encryptionKeyResponse?.data?.key;
+    if (!encryptionKey) {
+      return NextResponse.json({ error: 'No encryption key in response', response: encryptionKeyResponse }, { status: 500 });
+    }
+
+    // Decrypt File using the exact same approach as your working code
+    const decrypted = await lighthouse.decryptFile(
+      cid,
+      encryptionKeyResponse.data.key
+    );
+
+    console.log('Decryption result type:', typeof decrypted);
+    console.log('Decryption result length:', decrypted ? decrypted.length : 'null/undefined');
+
+    if (!decrypted || decrypted.length === 0) {
+      console.error('Decryption failed or returned empty result');
+      return NextResponse.json({ error: 'Failed to decrypt file or file is empty' }, { status: 500 });
+    }
+
+    console.log('File decrypted successfully, size:', decrypted.length);
+    
+    // Log first few bytes to debug
+    if (decrypted.length > 0) {
+      const firstBytes = Buffer.from(decrypted.slice(0, 16)).toString('hex');
+      console.log('First 16 bytes (hex):', firstBytes);
+    }
+
+    // File type detection using the exact same logic as your working code
+    const buffer = Buffer.from(decrypted);
+    const { extension, mimeType } = detectFileType(buffer);
+    
+    const detectedFileName = fileName ? 
+      `${fileName.replace(/\.[^/.]+$/, '')}.${extension}` : 
+      `decrypted_${cid.slice(0, 8)}.${extension}`;
+
+    // Create base64 data for download (following your working approach)
+    const fileBuffer = Buffer.from(decrypted);
+    const base64Data = fileBuffer.toString('base64');
+
+    return NextResponse.json({
+      success: true,
+      fileBase64: base64Data,
+      fileName: detectedFileName,
+      mimeType: mimeType,
+      detectedExtension: extension,
+      fileSize: decrypted.length,
+      message: 'File decrypted successfully'
+    });
+  } catch (error) {
+    console.error('Decrypt endpoint error:', error);
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Decrypt failed' }, { status: 500 });
+  }
+}
