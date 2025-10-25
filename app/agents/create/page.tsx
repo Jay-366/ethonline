@@ -25,6 +25,13 @@ export default function CreateAgentPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [lighthouseStatus, setLighthouseStatus] = useState<{
+    step: 'idle' | 'encrypting' | 'applying-conditions' | 'success' | 'error';
+    message: string;
+    cid?: string;
+    error?: string;
+    encryptionComplete?: boolean;
+  }>({ step: 'idle', message: '', encryptionComplete: false });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -97,31 +104,128 @@ export default function CreateAgentPage() {
     return errors.length === 0;
   };
 
-  const handleUpload = () => {
-    // Clear previous errors
-    setValidationErrors([]);
-    
-    // Validate form
-    if (!validateForm()) {
-      return;
+  const handleUpload = async () => {
+    // Clear previous errors only if starting fresh
+    if (!lighthouseStatus.encryptionComplete) {
+      setValidationErrors([]);
+      setLighthouseStatus({ step: 'idle', message: '', encryptionComplete: false });
+      
+      // Validate form
+      if (!validateForm()) {
+        return;
+      }
+      
+      if (selectedFiles.length === 0) {
+        setLighthouseStatus({ 
+          step: 'error', 
+          message: '', 
+          error: 'Please select a file to upload',
+          encryptionComplete: false
+        });
+        return;
+      }
     }
     
     setIsUploading(true);
-    setUploadProgress(0);
 
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsUploading(false);
-          setUploadSuccess(true);
-          setCid('QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco');
-          return 100;
+    try {
+      let cid = lighthouseStatus.cid;
+      
+      // Step 1: Encrypt and upload file (only if not already done)
+      if (!lighthouseStatus.encryptionComplete) {
+        setUploadProgress(0);
+        setLighthouseStatus({ 
+          step: 'encrypting', 
+          message: 'Encrypting file and uploading to Lighthouse...',
+          encryptionComplete: false
+        });
+        
+        const formData = new FormData();
+        formData.append('file', selectedFiles[0]);
+        
+        const uploadResponse = await fetch('/api/lighthouse', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const uploadResult = await uploadResponse.json();
+        
+        if (!uploadResponse.ok) {
+          throw new Error(uploadResult.error || 'Failed to encrypt and upload file');
         }
-        return prev + 10;
+        
+        // Get CID from the upload result
+        cid = uploadResult.data?.[0]?.Hash || uploadResult.Hash;
+        setUploadProgress(50);
+        
+        // Mark encryption as complete
+        setLighthouseStatus({ 
+          step: 'applying-conditions', 
+          message: `File encrypted successfully! CID: ${cid}. Now applying access conditions...`,
+          cid,
+          encryptionComplete: true
+        });
+      } else {
+        // If encryption already complete, just update to applying conditions
+        setLighthouseStatus({ 
+          step: 'applying-conditions', 
+          message: `Retrying access conditions for CID: ${cid}...`,
+          cid,
+          encryptionComplete: true
+        });
+      }
+      
+      // Step 2: Apply access conditions
+      const conditionsFormData = new FormData();
+      conditionsFormData.append('cid', cid);
+      
+      const conditionsResponse = await fetch('/api/lighthouse', {
+        method: 'PUT',
+        body: conditionsFormData
       });
-    }, 200);
+      
+      const conditionsResult = await conditionsResponse.json();
+      
+      if (!conditionsResponse.ok) {
+        // Keep encryption status but show error for step 2
+        setLighthouseStatus({ 
+          step: 'error', 
+          message: `File encrypted successfully! CID: ${cid}`, 
+          error: `Failed to apply access conditions: ${conditionsResult.error || 'Unknown error'}`,
+          cid,
+          encryptionComplete: true
+        });
+        setIsUploading(false);
+        return;
+      }
+      
+      // Success
+      setUploadProgress(100);
+      setLighthouseStatus({ 
+        step: 'success', 
+        message: 'File encrypted and access conditions applied successfully!',
+        cid,
+        encryptionComplete: true
+      });
+      
+      setIsUploading(false);
+      setUploadSuccess(true);
+      setCid(cid);
+      
+    } catch (error) {
+      console.error('Lighthouse upload failed:', error);
+      setLighthouseStatus({ 
+        step: 'error', 
+        message: lighthouseStatus.encryptionComplete ? `File encrypted successfully! CID: ${lighthouseStatus.cid}` : '', 
+        error: error instanceof Error ? error.message : 'Upload failed',
+        cid: lighthouseStatus.cid,
+        encryptionComplete: lighthouseStatus.encryptionComplete
+      });
+      setIsUploading(false);
+      if (!lighthouseStatus.encryptionComplete) {
+        setUploadProgress(0);
+      }
+    }
   };
 
   const copyToClipboard = () => {
@@ -555,6 +659,105 @@ export default function CreateAgentPage() {
             <label className="block mb-3 text-sm font-medium text-[#f8ede0]">
               Deploy Your Agent
             </label>
+            
+            {/* Lighthouse Status Display */}
+            {lighthouseStatus.step !== 'idle' && (
+              <div className="mb-4 space-y-3">
+                {/* Step 1: Encrypting */}
+                <div className="flex items-center gap-3 p-3 rounded-md border border-[#5d606c]" style={{ backgroundColor: '#1C1F2B' }}>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                    lighthouseStatus.step === 'encrypting' ? 'animate-spin' : ''
+                  }`} style={{
+                    backgroundColor: lighthouseStatus.step === 'encrypting' ? '#f8ede0' : 
+                                   (lighthouseStatus.step === 'applying-conditions' || lighthouseStatus.step === 'success') ? '#10B981' : '#5d606c',
+                    color: lighthouseStatus.step === 'encrypting' ? '#161823' : '#fff'
+                  }}>
+                    {lighthouseStatus.step === 'encrypting' ? (
+                      <div className="w-3 h-3 border-2 border-[#161823] border-t-transparent rounded-full animate-spin"></div>
+                    ) : (lighthouseStatus.step === 'applying-conditions' || lighthouseStatus.step === 'success') ? (
+                      <Check className="w-4 h-4" />
+                    ) : (
+                      <span className="text-xs font-bold">1</span>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-[#f8ede0]">
+                      Step 1: Encrypt & Upload File
+                    </div>
+                    <div className="text-xs text-[#5d606c]">
+                      {lighthouseStatus.step === 'encrypting' ? 'Encrypting file and uploading to Lighthouse...' :
+                       (lighthouseStatus.step === 'applying-conditions' || lighthouseStatus.step === 'success') ? `✓ File encrypted successfully! CID: ${lighthouseStatus.cid}` :
+                       'Waiting...'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Step 2: Applying Conditions */}
+                <div className="flex items-center gap-3 p-3 rounded-md border border-[#5d606c]" style={{ backgroundColor: '#1C1F2B' }}>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                    lighthouseStatus.step === 'applying-conditions' ? 'animate-spin' : ''
+                  }`} style={{
+                    backgroundColor: lighthouseStatus.step === 'applying-conditions' ? '#f8ede0' : 
+                                   lighthouseStatus.step === 'success' ? '#10B981' : '#5d606c',
+                    color: lighthouseStatus.step === 'applying-conditions' ? '#161823' : '#fff'
+                  }}>
+                    {lighthouseStatus.step === 'applying-conditions' ? (
+                      <div className="w-3 h-3 border-2 border-[#161823] border-t-transparent rounded-full animate-spin"></div>
+                    ) : lighthouseStatus.step === 'success' ? (
+                      <Check className="w-4 h-4" />
+                    ) : (
+                      <span className="text-xs font-bold">2</span>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-[#f8ede0]">
+                      Step 2: Apply Access Conditions
+                    </div>
+                    <div className="text-xs text-[#5d606c]">
+                      {lighthouseStatus.step === 'applying-conditions' ? 'Applying token-gated access conditions...' :
+                       lighthouseStatus.step === 'success' ? '✓ Access conditions applied successfully!' :
+                       'Waiting for step 1 to complete...'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Error Display */}
+                {lighthouseStatus.step === 'error' && (
+                  <div className="p-3 rounded-md border border-red-500" style={{ backgroundColor: '#1C1F2B' }}>
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 mt-0.5">
+                        <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-sm font-medium text-red-500 mb-1">
+                          {lighthouseStatus.encryptionComplete ? 'Step 2 Failed' : 'Upload Failed'}
+                        </h3>
+                        {lighthouseStatus.message && (
+                          <p className="text-sm text-green-400 mb-1">
+                            {lighthouseStatus.message}
+                          </p>
+                        )}
+                        <p className="text-sm text-red-400">
+                          {lighthouseStatus.error}
+                        </p>
+                        {lighthouseStatus.encryptionComplete && (
+                          <button
+                            onClick={handleUpload}
+                            disabled={isUploading}
+                            className="mt-2 px-3 py-1 text-xs bg-[#f8ede0] text-[#161823] rounded hover:bg-opacity-90 disabled:opacity-50"
+                          >
+                            {isUploading ? 'Retrying...' : 'Retry Step 2'}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            
             {/* Submit Button */}
             <button
               onClick={handleUpload}

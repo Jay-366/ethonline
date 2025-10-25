@@ -174,7 +174,7 @@ export default function FileUpload({ onFilesChange }: FileUploadProps) {
               )}
             </p>
             <p className="text-sm text-[#5d606c]">
-              Supports .zip, .json, .csv files
+              All file types supported
             </p>
           </div>
  
@@ -184,7 +184,6 @@ export default function FileUpload({ onFilesChange }: FileUploadProps) {
             multiple
             hidden
             onChange={onSelect}
-            accept=".zip,.json,.csv"
           />
         </div>
       </motion.div>
