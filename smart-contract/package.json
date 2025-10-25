@@ -11,6 +11,9 @@
     "deploy:form": "hardhat run scripts/deployForm.ts",
     "deploy:form:localhost": "hardhat run scripts/deployForm.ts --network localhost",
     "deploy:form:sepolia": "hardhat run scripts/deployForm.ts --network sepolia",
+    "deploy:vault": "hardhat run scripts/deployDataCoinVault.ts",
+    "deploy:vault:localhost": "hardhat run scripts/deployDataCoinVault.ts --network localhost",
+    "deploy:vault:sepolia": "hardhat run scripts/deployDataCoinVault.ts --network sepolia",
     "check:mint": "hardhat run scripts/check-mint.ts --network sepolia",
     "node": "hardhat node"
   },
@@ -22,6 +25,7 @@
     "ethers": "^6.15.0",
     "forge-std": "github:foundry-rs/forge-std#v1.9.4",
     "hardhat": "^3.0.9",
+    "ts-node": "^10.9.2",
     "typescript": "~5.8.0",
     "viem": "^2.38.4"
   },
@@ -29,6 +33,3 @@
     "@openzeppelin/contracts": "^5.4.0"
   }
 }
-
-
-
