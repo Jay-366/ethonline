@@ -317,12 +317,4 @@ Built with ❤️ for ETHOnline 2025
 
 ---
 
-## 📧 Contact
-
-For questions or support, reach out to:
-- GitHub Issues: [Project Issues](https://github.com/Jay-366/ethonline/issues)
-- Twitter: [@YourHandle](https://twitter.com/yourhandle)
-
----
-
 **Intellitrade** - Empowering the Decentralized AI Economy 
