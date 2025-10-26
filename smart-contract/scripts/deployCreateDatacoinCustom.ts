@@ -50,7 +50,8 @@ async function main() {
 
   // Test the connection to factory
   try {
-    const approvedTokens = await createDatacoinCustom.getApprovedLockTokenAndConfig();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const approvedTokens = await (createDatacoinCustom as any).getApprovedLockTokenAndConfig();
     console.log(`✓ Successfully connected to factory. Found ${approvedTokens[0].length} approved tokens.`);
     
     // Show available lock tokens

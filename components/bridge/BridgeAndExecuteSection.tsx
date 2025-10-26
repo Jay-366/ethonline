@@ -39,10 +39,7 @@ export default function BridgeAndExecuteSection({ children }: BridgeAndExecuteSe
   return (
     <WidgetsNexusProvider
       config={{
-        environment: 'testnet',            // Use testnet for development
-        defaultToChainId: 11155111,        // Ethereum Sepolia
-        // Pass the wallet provider to the widgets provider
-        provider: provider,
+        debug: false,
       }}
     >
       {/* Now it's safe to render widgets */}

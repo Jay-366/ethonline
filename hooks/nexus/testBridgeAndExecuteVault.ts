@@ -52,7 +52,7 @@ export async function testBridgeAndExecuteVault(
         token: SUPPORTED_TOKENS,
         bridgeAmount: string,
         chainId: SUPPORTED_CHAINS_IDS,
-        userAddr: 0x${string},
+        userAddr: `0x${string}`,
       ) => {
         console.log('Simulate buildFunctionParams:', { token, bridgeAmount, chainId, userAddr });
         

@@ -28,9 +28,9 @@ async function main() {
 
   // Check signer balance
   const balance = await provider.getBalance(signer.address);
-  console.log(`💰 Signer balance: ${ethers.formatEther(balance)} ETH`);
+  console.log(`� Signer balance: ${ethers.formatEther(balance)} ETH`);
 
-  if (balance === 0n) {
+  if (balance === BigInt(0)) {
     console.error("❌ Error: Insufficient ETH balance for deployment");
     console.log("Please fund your wallet with Sepolia ETH from a faucet");
     process.exit(1);
@@ -59,7 +59,7 @@ async function main() {
 
   // Get current gas price
   const gasPrice = await provider.getFeeData();
-  console.log(`💨 Gas price: ${ethers.formatUnits(gasPrice.gasPrice || 0n, "gwei")} gwei`);
+  console.log(`💨 Gas price: ${ethers.formatUnits(gasPrice.gasPrice || BigInt(0), "gwei")} gwei`);
 
   // Deploy the contract
   console.log("🏗️  Deploying DataCoinVault...");
@@ -78,7 +78,8 @@ async function main() {
   // Verify deployment by calling a view function
   console.log("🔍 Verifying deployment...");
   try {
-    const owner = await dataCoinVault.owner();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const owner = await (dataCoinVault as any).owner();
     console.log(`✓ Contract owner: ${owner}`);
     console.log(`✓ Deployment verified successfully!`);
   } catch (error) {

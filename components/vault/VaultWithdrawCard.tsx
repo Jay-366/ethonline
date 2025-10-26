@@ -35,8 +35,6 @@ export default function VaultWithdrawCard({ onSubscriptionSuccess }: VaultWithdr
     reset,
     vaultAddress,
     tokenAddress,
-    sourceChainId,
-    setSourceChain,
   } = useBridgeAndExecuteVault();
 
   const handleSimulate = async () => {
@@ -75,6 +73,7 @@ export default function VaultWithdrawCard({ onSubscriptionSuccess }: VaultWithdr
     }
     try {
       const provider = await connector.getProvider();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await handleInit(provider as any);
     } catch (err) {
       console.error('Failed to initialize Nexus:', err);
@@ -104,7 +103,7 @@ export default function VaultWithdrawCard({ onSubscriptionSuccess }: VaultWithdr
           }}
         >
           <p className="text-xs" style={{ color: 'rgba(251, 237, 224, 0.7)' }}>
-            💡 Your USDC will be bridged from OP Sepolia to Sepolia treasury, and you'll receive FormDataCoin tokens on Sepolia in return
+            💡 Your USDC will be bridged from OP Sepolia to Sepolia treasury, and you&apos;ll receive FormDataCoin tokens on Sepolia in return
           </p>
         </div>
       </div>
@@ -234,7 +233,7 @@ export default function VaultWithdrawCard({ onSubscriptionSuccess }: VaultWithdr
           }}
         >
           <p className="text-sm" style={{ color: '#3b82f6' }}>
-            ℹ️ You're on Sepolia (destination chain). Please switch to OP Sepolia to start the bridge.
+            ℹ️ You&apos;re on Sepolia (destination chain). Please switch to OP Sepolia to start the bridge.
           </p>
         </div>
       )}

@@ -134,9 +134,10 @@ async function main() {
   } catch (error) {
     console.error("❌ Error creating DataCoin:", error);
     
-    if (error.message.includes("insufficient allowance")) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes("insufficient allowance")) {
       console.log("💡 Tip: Make sure to approve the lock tokens first");
-    } else if (error.message.includes("insufficient balance")) {
+    } else if (errorMessage.includes("insufficient balance")) {
       console.log("💡 Tip: You need more lock tokens in your wallet");
     }
   }

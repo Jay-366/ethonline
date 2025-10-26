@@ -6,6 +6,22 @@ import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger, GSAPSplitText);
 
+interface SplitTextProps {
+  text: string;
+  className?: string;
+  delay?: number;
+  duration?: number;
+  ease?: string;
+  splitType?: string;
+  from?: { opacity: number; y: number };
+  to?: { opacity: number; y: number };
+  threshold?: number;
+  rootMargin?: string;
+  textAlign?: string;
+  tag?: string;
+  onLetterAnimationComplete?: () => void;
+}
+
 const SplitText = ({
   text,
   className = '',
@@ -20,8 +36,9 @@ const SplitText = ({
   textAlign = 'center',
   tag = 'p',
   onLetterAnimationComplete
-}) => {
-  const ref = useRef(null);
+}: SplitTextProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ref = useRef<any>(null);
   const animationCompletedRef = useRef(false);
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
@@ -61,8 +78,10 @@ const SplitText = ({
             : `+=${marginValue}${marginUnit}`;
       const start = `top ${startPct}%${sign}`;
 
-      let targets;
-      const assignTargets = self => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let targets: any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const assignTargets = (self: any) => {
         if (splitType.includes('chars') && self.chars.length) targets = self.chars;
         if (!targets && splitType.includes('words') && self.words.length) targets = self.words;
         if (!targets && splitType.includes('lines') && self.lines.length) targets = self.lines;
@@ -77,7 +96,8 @@ const SplitText = ({
         wordsClass: 'split-word',
         charsClass: 'split-char',
         reduceWhiteSpace: false,
-        onSplit: self => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onSplit: (self: any) => {
           assignTargets(self);
           const tween = gsap.fromTo(
             targets,
@@ -139,8 +159,8 @@ const SplitText = ({
   );
 
   const renderTag = () => {
-    const style = {
-      textAlign,
+    const style: React.CSSProperties = {
+      textAlign: textAlign as React.CSSProperties['textAlign'],
       overflow: 'hidden',
       display: 'inline-block',
       whiteSpace: 'normal',

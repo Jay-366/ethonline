@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { writeFile } from 'fs/promises'
-import { ethers } from 'ethers'
 import lighthouse from '@lighthouse-web3/sdk'
-import kavach from '@lighthouse-web3/kavach'
 import { join } from 'path'
 import { tmpdir } from 'os'
 
@@ -386,6 +384,7 @@ export async function PATCH(request: NextRequest) {
     const signedMessage = await signAuthMessageForEncryption(userAddress, userSignature);
 
     // Get encryption key following docs: fetchEncryptionKey(cid, userAddress, signedMessage)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let encryptionKeyResponse: any = null;
     try {
       console.log('Fetching encryption key with:', { cid, userAddress: userAddress.substring(0, 10) + '...', signedMessageLength: signedMessage.length });

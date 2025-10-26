@@ -60,7 +60,7 @@ export function useUnifiedBalanceVault() {
       console.log('Vault Address:', VAULT_ADDRESS);
       
       // Step 1: Get unified balance to see available funds across chains
-      const unifiedBalance = await nexusSDK.getUnifiedBalance();
+      const unifiedBalance = await nexusSDK.getUnifiedBalances();
       console.log('Unified Balance:', unifiedBalance);
       
       // Step 2: Create intent for the transaction
@@ -92,7 +92,8 @@ export function useUnifiedBalanceVault() {
       // - Publish intent to solvers
       // - Wait for solver to provide liquidity
       // - Execute vault contract on Sepolia
-      const result = await nexusSDK.executeWithUnifiedBalance(intentParams);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = await (nexusSDK as any).executeWithUnifiedBalance(intentParams);
       
       console.log('=== INTENT EXECUTION RESULT ===');
       console.log('Intent ID:', result.intentId); // THIS IS THE INTENT!
@@ -137,7 +138,8 @@ export function useUnifiedBalanceVault() {
     }
 
     try {
-      const status = await nexusSDK.getIntentStatus(intentId);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const status = await (nexusSDK as any).getIntentStatus(intentId);
       console.log('Intent Status:', status);
       return status;
     } catch (err) {

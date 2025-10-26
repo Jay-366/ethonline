@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * FormDatacoin Frontend Integration Helper
  * This utility provides easy-to-use functions for interacting with FormDatacoin contract
@@ -50,6 +51,9 @@ const ERC20_ABI = [
  * FormDatacoin Helper Class
  */
 class FormDatacoinHelper {
+  network: string;
+  config: typeof FORMDATACOIN_CONFIG.SEPOLIA | typeof FORMDATACOIN_CONFIG.LOCALHOST;
+  
   constructor(network = 'sepolia') {
     this.network = network;
     this.config = network === 'localhost' ? FORMDATACOIN_CONFIG.LOCALHOST : FORMDATACOIN_CONFIG.SEPOLIA;
@@ -58,7 +62,8 @@ class FormDatacoinHelper {
   /**
    * Get the FormDatacoin contract instance
    */
-  async getContract(signer) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async getContract(signer: any) {
     return new ethers.Contract(
       this.config.address,
       FORMDATACOIN_ABI,
@@ -69,14 +74,15 @@ class FormDatacoinHelper {
   /**
    * Get ERC20 token contract instance
    */
-  getTokenContract(tokenAddress, signer) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getTokenContract(tokenAddress: string, signer: any) {
     return new ethers.Contract(tokenAddress, ERC20_ABI, signer);
   }
 
   /**
    * Create DataCoin with full parameters
    */
-  async createDataCoinWithParams(signer, params) {
+  async createDataCoinWithParams(signer: any, params: any) {
     const contract = await this.getContract(signer);
     const tokenContract = this.getTokenContract(params.lockToken, signer);
 
@@ -118,7 +124,7 @@ class FormDatacoinHelper {
   /**
    * Create DataCoin with simplified parameters (standard allocations)
    */
-  async createDataCoinSimple(signer, params) {
+  async createDataCoinSimple(signer: any, params: any) {
     const contract = await this.getContract(signer);
     const tokenContract = this.getTokenContract(params.lockToken, signer);
 
@@ -157,7 +163,7 @@ class FormDatacoinHelper {
   /**
    * Mint new DataCoins
    */
-  async mintDataCoin(signer, to, amount) {
+  async mintDataCoin(signer: any, to: any, amount: any) {
     const contract = await this.getContract(signer);
     const tx = await contract.mintDataCoin(to, amount);
     const receipt = await tx.wait();
@@ -168,7 +174,7 @@ class FormDatacoinHelper {
   /**
    * Get the created DataCoin address
    */
-  async getDataCoinAddress(signer) {
+  async getDataCoinAddress(signer: any) {
     const contract = await this.getContract(signer);
     return await contract.getDataCoinAddress();
   }
@@ -176,7 +182,7 @@ class FormDatacoinHelper {
   /**
    * Get the created pool address
    */
-  async getPoolAddress(signer) {
+  async getPoolAddress(signer: any) {
     const contract = await this.getContract(signer);
     return await contract.getPoolAddress();
   }
@@ -184,7 +190,7 @@ class FormDatacoinHelper {
   /**
    * Get minimum lock amount for a token
    */
-  async getMinLockAmount(signer, tokenAddress) {
+  async getMinLockAmount(signer: any, tokenAddress: any) {
     const contract = await this.getContract(signer);
     return await contract.getMinLockAmount(tokenAddress);
   }
@@ -192,7 +198,7 @@ class FormDatacoinHelper {
   /**
    * Get approved lock tokens and their configs
    */
-  async getApprovedTokensAndConfigs(signer) {
+  async getApprovedTokensAndConfigs(signer: any) {
     const contract = await this.getContract(signer);
     const [tokens, configs] = await contract.getApprovedLockTokenAndConfig();
     return { tokens, configs };
@@ -201,7 +207,7 @@ class FormDatacoinHelper {
   /**
    * Validate parameters before creating DataCoin
    */
-  validateParams(params) {
+  validateParams(params: any) {
     const errors = [];
 
     if (!params.name || params.name.trim() === '') {
@@ -262,14 +268,14 @@ class FormDatacoinHelper {
   /**
    * Convert basis points to percentage
    */
-  static bpsToPercentage(bps) {
+  static bpsToPercentage(bps: any) {
     return (bps / 100).toFixed(2) + '%';
   }
 
   /**
    * Convert percentage to basis points
    */
-  static percentageToBps(percentage) {
+  static percentageToBps(percentage: any) {
     return Math.round(percentage * 100);
   }
 }

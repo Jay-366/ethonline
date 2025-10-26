@@ -20,7 +20,18 @@ export default function MyAgentsPage() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0.001, 0.1]);
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [showFilterMenu, setShowFilterMenu] = useState(false);
-  const [newlyCreatedAgent, setNewlyCreatedAgent] = useState<any>(null);
+  const [newlyCreatedAgent, setNewlyCreatedAgent] = useState<{
+    id: number;
+    name: string;
+    description: string;
+    category: string;
+    price: number;
+    rating: number;
+    users: number;
+    revenue?: string;
+    trending: boolean;
+    status?: 'Active' | 'Inactive' | 'Pending';
+  } | null>(null);
 
   // Check if coming from successful upload
   useEffect(() => {
@@ -30,23 +41,16 @@ export default function MyAgentsPage() {
     
     if (uploadSuccess === 'true' && !newlyCreatedAgent) {
       const cryptoAgent = {
-        id: Date.now(), // Unique ID
+        id: Date.now(), // Unique ID as number
         name: agentName,
-        creator: 'Your Company',
-        role: 'Crypto Agent',
-        category: 'Trading',
         description: "I'm providing advanced cryptocurrency analysis and trading strategies quickly and professionally. I'll be happy to help you with your crypto trading.",
-        rating: 4.8,
-        reviews: 0,
-        users: 1,
-        revenue: '$0',
-        status: 'Active' as const,
+        category: 'Trading',
         price: 0.019,
-        experience: '1 year exp',
-        workType: 'Project work',
-        expiry: 'Active subscription',
-        avatar: '🤖',
-        trending: true,
+        rating: 5.0,
+        users: 0,
+        revenue: '$0',
+        trending: false,
+        status: 'Active' as const,
       };
       setNewlyCreatedAgent(cryptoAgent);
       setActiveTab('created'); // Switch to created tab to show the new agent
@@ -224,8 +228,8 @@ export default function MyAgentsPage() {
           break;
         case 'revenue':
           if ('revenue' in a && 'revenue' in b) {
-            const revenueA = parseFloat((a as any).revenue.replace(/[$,]/g, ''));
-            const revenueB = parseFloat((b as any).revenue.replace(/[$,]/g, ''));
+            const revenueA = parseFloat((a as { revenue: string }).revenue.replace(/[$,]/g, ''));
+            const revenueB = parseFloat((b as { revenue: string }).revenue.replace(/[$,]/g, ''));
             comparison = revenueA - revenueB;
           }
           break;
@@ -583,8 +587,8 @@ export default function MyAgentsPage() {
                 pricePeriod="/month"
                 rating={agent.rating}
                 users={agent.users}
-                revenue={(agent as any).revenue}
-                status={(agent as any).status as 'Active' | 'Inactive' | 'Pending'}
+                revenue={(agent as { revenue?: string }).revenue}
+                status={(agent as { status?: 'Active' | 'Inactive' | 'Pending' }).status as 'Active' | 'Inactive' | 'Pending' | undefined}
                 onViewDetails={() => handleAgentSelect(agent)}
                 onEdit={() => console.log('Edit agent:', agent.id)}
                 variant="glass"

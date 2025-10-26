@@ -1,6 +1,6 @@
 'use client';
 
-import { Star, TrendingUp, ArrowLeft, MessageCircle, DollarSign, CheckCircle } from 'lucide-react';
+import { Star, MessageCircle, DollarSign } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState, useEffect, useId, useRef } from 'react';
@@ -43,7 +43,14 @@ const Grid = ({
   );
 };
 
-const GridPattern = ({ width, height, x, y, squares, ...props }: any) => {
+const GridPattern = ({ width, height, x, y, squares, ...props }: {
+  width: number;
+  height: number;
+  x: string;
+  y: string;
+  squares?: number[][];
+  [key: string]: unknown;
+}) => {
   const patternId = useId();
 
   return (
@@ -68,7 +75,9 @@ const GridPattern = ({ width, height, x, y, squares, ...props }: any) => {
       />
       {squares && (
         <svg x={x} y={y} className="overflow-visible">
-          {squares.map(([x, y]: any, index: number) => (
+          {squares.map((square, index: number) => {
+            const [x, y] = square;
+            return (
             <rect
               strokeWidth="0"
               key={`${x}-${y}-${index}`}
@@ -77,7 +86,7 @@ const GridPattern = ({ width, height, x, y, squares, ...props }: any) => {
               x={x * width}
               y={y * height}
             />
-          ))}
+          )})}
         </svg>
       )}
     </svg>
@@ -840,7 +849,7 @@ export default function AgentDetailsPage() {
                     console.log('📝 Auth message received, requesting signature...');
                     
                     // Request signature from user's wallet
-                    const provider = await connector.getProvider();
+                    const provider = await connector.getProvider() as { request?: (args: { method: string; params: string[] }) => Promise<string> };
                     if (!provider || !provider.request) {
                       throw new Error('Wallet provider not available');
                     }
@@ -848,7 +857,7 @@ export default function AgentDetailsPage() {
                     const userSignature = await provider.request({
                       method: 'personal_sign',
                       params: [authResponse.data.message, address],
-                    }) as string;
+                    });
                     
                     console.log('✍️ Signature obtained, calling decrypt API...');
                     
@@ -896,13 +905,13 @@ export default function AgentDetailsPage() {
                       // Received encryption key but server didn't decrypt file
                       setDecryptError('Encryption key returned (no server-side decrypt available).');
                       // Optionally copy key to clipboard for manual decryption
-                      try { await navigator.clipboard.writeText(String(data.encryptionKey)); } catch (e) {}
+                      try { await navigator.clipboard.writeText(String(data.encryptionKey)); } catch { /* ignore */ }
                     } else {
                       setDecryptError('Decrypt endpoint returned no file and no key.');
                     }
-                  } catch (err: any) {
+                  } catch (err: unknown) {
                     console.error('❌ Decrypt error:', err);
-                    setDecryptError(err?.message || String(err));
+                    setDecryptError(err instanceof Error ? err.message : String(err));
                   } finally {
                     setDecrypting(false);
                   }

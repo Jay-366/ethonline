@@ -1,6 +1,7 @@
 // Global polyfills that must run before any other code
 import { Buffer } from 'buffer';
 import util from 'util';
+// @ts-expect-error - inherits doesn't have types
 import inherits from 'inherits';
 
 // Make Buffer available globally immediately

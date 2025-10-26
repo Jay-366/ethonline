@@ -300,7 +300,9 @@ export default function CreateAgentPage() {
       
       setIsUploading(false);
       setUploadSuccess(true);
-      setCid(cid);
+      if (cid) {
+        setCid(cid);
+      }
       
       // Redirect to agents page with success parameters after a short delay
       setTimeout(() => {

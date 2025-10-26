@@ -122,7 +122,7 @@ async function checkTokenBalance(
     const formattedBalance = ethers.formatUnits(balance, decimals);
     
     // Get total deposited (tracked)
-    let totalDeposited = 0n;
+    let totalDeposited = BigInt(0);
     try {
       totalDeposited = await vault.getTotalDeposited(tokenAddress);
     } catch (error) {
@@ -130,7 +130,7 @@ async function checkTokenBalance(
     }
     const formattedDeposited = ethers.formatUnits(totalDeposited, decimals);
 
-    if (balance > 0n) {
+    if (balance > BigInt(0)) {
       console.log(`🟢 ${symbol}${name ? ` (${name})` : ""}`);
       console.log(`   Address: ${tokenAddress}`);
       console.log(`   Balance: ${formattedBalance} ${symbol}`);
