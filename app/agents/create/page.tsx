@@ -6,8 +6,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Timeline } from '@/components/ui/timeline';
 import FileUpload from '@/components/ui/file-upload';
+import { useAccount, useSignMessage } from 'wagmi';
+import lighthouse from '@lighthouse-web3/sdk';
 
 export default function CreateAgentPage() {
+  // Wallet hooks
+  const { address, isConnected } = useAccount();
+  const { signMessageAsync } = useSignMessage();
+  
   const [agentName, setAgentName] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
@@ -75,6 +81,9 @@ export default function CreateAgentPage() {
   const validateForm = () => {
     const errors: string[] = [];
     
+    if (!isConnected || !address) {
+      errors.push('Please connect your wallet first');
+    }
     if (!agentName.trim()) {
       errors.push('Agent name is required');
     }
@@ -148,19 +157,55 @@ export default function CreateAgentPage() {
         setUploadProgress(0);
         setLighthouseStatus({ 
           step: 'encrypting', 
-          message: 'Encrypting file and uploading to Lighthouse...',
+          message: 'Getting wallet signature for Lighthouse...',
+          encryptionComplete: false
+        });
+
+        // Get auth message from our API (which uses lighthouse.getAuthMessage internally)
+        const authResponse = await fetch('/api/lighthouse/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userAddress: address })
+        });
+        const authData = await authResponse.json();
+        
+        if (!authData.message) {
+          throw new Error('Failed to get auth message from Lighthouse');
+        }
+
+        // Sign the auth message with user's wallet
+        const signature = await signMessageAsync({
+          message: authData.message
+        });
+        
+        setLighthouseStatus({ 
+          step: 'encrypting', 
+          message: 'Uploading and encrypting file to Lighthouse...',
           encryptionComplete: false
         });
         
         const formData = new FormData();
         formData.append('file', selectedFiles[0]);
+        formData.append('userAddress', address!);
+        formData.append('userSignature', signature);
         
         const uploadResponse = await fetch('/api/lighthouse', {
           method: 'POST',
           body: formData
         });
         
-        const uploadResult = await uploadResponse.json();
+        console.log('Upload response status:', uploadResponse.status);
+        console.log('Upload response headers:', uploadResponse.headers);
+        
+        let uploadResult;
+        try {
+          const responseText = await uploadResponse.text();
+          console.log('Upload response text:', responseText);
+          uploadResult = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error('Failed to parse upload response:', parseError);
+          throw new Error(`Invalid response from server: ${uploadResponse.status} ${uploadResponse.statusText}`);
+        }
         
         if (!uploadResponse.ok) {
           throw new Error(uploadResult.error || 'Failed to encrypt and upload file');
@@ -188,15 +233,48 @@ export default function CreateAgentPage() {
       }
       
       // Step 2: Apply access conditions
-      const conditionsFormData = new FormData();
-      conditionsFormData.append('cid', cid);
+      // Get fresh auth message and signature for conditions
+      console.log('Getting fresh auth message for access conditions...')
+      const conditionsAuthResponse = await lighthouse.getAuthMessage(address!)
       
+      if (!conditionsAuthResponse || !conditionsAuthResponse.data || !conditionsAuthResponse.data.message) {
+        throw new Error('Failed to get auth message for conditions')
+      }
+
+      const messageToSign = conditionsAuthResponse.data.message
+      console.log('Auth message for conditions:', messageToSign)
+
+      // Sign the fresh auth message
+      console.log('Requesting signature for access conditions...')
+      const conditionsSignature = await signMessageAsync({
+        message: messageToSign
+      })
+      console.log('Conditions signature obtained')
+      
+      // Send as JSON (not FormData) to match backend expectations
       const conditionsResponse = await fetch('/api/lighthouse', {
         method: 'PUT',
-        body: conditionsFormData
-      });
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cid: cid,
+          userAddress: address!,
+          signedMessage: conditionsSignature
+        })
+      })
       
-      const conditionsResult = await conditionsResponse.json();
+      console.log('Conditions response status:', conditionsResponse.status)
+      
+      let conditionsResult;
+      try {
+        const conditionsResponseText = await conditionsResponse.text();
+        console.log('Conditions response text:', conditionsResponseText);
+        conditionsResult = JSON.parse(conditionsResponseText);
+      } catch (parseError) {
+        console.error('Failed to parse conditions response:', parseError);
+        throw new Error(`Invalid response from conditions endpoint: ${conditionsResponse.status} ${conditionsResponse.statusText}`);
+      }
       
       if (!conditionsResponse.ok) {
         // Keep encryption status but show error for step 2

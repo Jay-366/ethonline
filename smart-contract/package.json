@@ -14,6 +14,13 @@
     "deploy:vault": "hardhat run scripts/deployDataCoinVault.ts",
     "deploy:vault:localhost": "hardhat run scripts/deployDataCoinVault.ts --network localhost",
     "deploy:vault:sepolia": "hardhat run scripts/deployDataCoinVault.ts --network sepolia",
+    "deploy:publicvault": "hardhat run scripts/deployPublicDataCoinVault.ts",
+    "deploy:publicvault:localhost": "hardhat run scripts/deployPublicDataCoinVault.ts --network localhost",
+    "deploy:publicvault:sepolia": "hardhat run scripts/deployPublicDataCoinVault.ts --network sepolia",
+    "deploy:custom": "hardhat run scripts/deployCreateDatacoinCustom.ts",
+    "deploy:custom:localhost": "hardhat run scripts/deployCreateDatacoinCustom.ts --network localhost",
+    "deploy:custom:sepolia": "hardhat run scripts/deployCreateDatacoinCustom.ts --network sepolia",
+    "check:publicvault": "hardhat run scripts/checkPublicVaultBalance.ts --network sepolia",
     "check:mint": "hardhat run scripts/check-mint.ts --network sepolia",
     "node": "hardhat node"
   },

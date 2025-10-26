@@ -6,49 +6,30 @@ import kavach from '@lighthouse-web3/kavach'
 import { join } from 'path'
 import { tmpdir } from 'os'
 
-// For encrypted file upload - try direct signing approach
-const signAuthMessage = async (privateKey: string) => {
+// For encrypted file upload - using user wallet signature
+const getAuthMessageAndSign = async (userAddress: string, userSignature: string) => {
   try {
-    const signer = new ethers.Wallet(privateKey)
-    console.log('Signer address:', signer.address)
+    console.log('Getting auth message for address:', userAddress)
     
-    // Try the lighthouse auth method first
-    const authResponse = await lighthouse.getAuthMessage(signer.address)
-    if (!authResponse || !authResponse.data || !authResponse.data.message) {
-      throw new Error('Failed to get auth message from lighthouse')
-    }
-    
-    const signedMessage = await signer.signMessage(authResponse.data.message)
-    console.log('Signed message for upload:', !!signedMessage)
-    return signedMessage
+    // The signature provided should already be the signature of the auth message
+    // so we can return it directly for uploadEncrypted
+    console.log('Using provided user signature for upload')
+    return userSignature
   } catch (error) {
-    console.error('Direct lighthouse auth failed, trying kavach...', error)
-    
-    // Fallback to kavach method
-    const signer = new ethers.Wallet(privateKey)
-    const authMessage = await kavach.getAuthMessage(signer.address)
-    if (!authMessage || !authMessage.message) {
-      throw new Error('Failed to get auth message from kavach')
-    }
-    const { JWT } = await kavach.getJWT(signer.address, await signer.signMessage(authMessage.message))
-    return JWT
+    console.error('Error with user signature:', error)
+    throw error
   }
 }
 
-// For access conditions
-const signAuthMessageForConditions = async (privateKey: string) => {
-  const signer = new ethers.Wallet(privateKey)
-  const authResponse = await lighthouse.getAuthMessage(signer.address)
-  if (!authResponse || !authResponse.data || !authResponse.data.message) {
-    throw new Error('Failed to get auth message from lighthouse')
-  }
-  const signedMessage = await signer.signMessage(authResponse.data.message)
-  return signedMessage
-}
-
-const accessControl = async (cid: string, publicKey: string, privateKey: string) => {
+const accessControl = async (cid: string, publicKey: string, signedMessage: string) => {
   try {
-    // Conditions to add
+    console.log('Applying access control with:', { 
+      cid, 
+      publicKey,
+      signedMessageLength: signedMessage?.length 
+    })
+    
+    // Conditions to add - matching working example exactly
     const conditions = [
       {
         id: 1,
@@ -63,22 +44,38 @@ const accessControl = async (cid: string, publicKey: string, privateKey: string)
         parameters: [":userAddress"],
       },
     ]
-
-    // Aggregator is what kind of operation to apply to access conditions
-    const aggregator = "([1])"
-
-    const signedMessage = await signAuthMessageForConditions(privateKey)
     
+    console.log('Using conditions:', JSON.stringify(conditions, null, 2))
+
+    // Aggregator - matching working example
+    const aggregator = "([1])"
+    
+    console.log('Calling lighthouse.applyAccessCondition with exact parameter order from working example:')
+    console.log('- publicKey:', publicKey)
+    console.log('- cid:', cid)
+    console.log('- signedMessage length:', signedMessage?.length)
+    console.log('- conditions:', conditions.length, 'condition(s)')
+    console.log('- aggregator:', aggregator)
+    
+    // Use exact same parameter order as working example:
+    // applyAccessCondition(publicKey, cid, signedMessage, conditions, aggregator)
     const response = await lighthouse.applyAccessCondition(
-      publicKey,
-      cid,
-      signedMessage,
-      conditions,
-      aggregator
+      publicKey,    // owner's public key (userAddress)
+      cid,          // CID of the file
+      signedMessage, // message signed by the owner
+      conditions,   // access conditions array
+      aggregator    // aggregator string
     )
 
+    console.log('Access conditions applied successfully:', response)
     return response
   } catch (error) {
+    console.error('Access control error details:', error)
+    console.error('Error type:', typeof error)
+    console.error('Error message:', error instanceof Error ? error.message : String(error))
+    if (error instanceof Error && error.stack) {
+      console.error('Error stack:', error.stack)
+    }
     throw error
   }
 }
@@ -88,10 +85,19 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File | null
+    const userAddress = formData.get('userAddress') as string | null
+    const userSignature = formData.get('userSignature') as string | null
     
     if (!file) {
       return NextResponse.json(
         { error: 'No file received' },
+        { status: 400 }
+      )
+    }
+
+    if (!userAddress || !userSignature) {
+      return NextResponse.json(
+        { error: 'User address and signature are required' },
         { status: 400 }
       )
     }
@@ -107,21 +113,18 @@ export async function POST(request: NextRequest) {
     console.log('File size:', file.size)
 
     const apiKey = process.env.LIGHTHOUSE_API_KEY
-    const publicKey = process.env.WALLET_PUBLIC_KEY
-    const privateKey = process.env.WALLET_PRIVATE_KEY
 
-    if (!apiKey || !publicKey || !privateKey) {
+    if (!apiKey) {
       return NextResponse.json(
-        { error: 'Missing required environment variables' },
+        { error: 'Missing LIGHTHOUSE_API_KEY in environment variables' },
         { status: 500 }
       )
     }
 
     console.log('Environment check:', {
       hasApiKey: !!apiKey,
-      hasPublicKey: !!publicKey,
-      hasPrivateKey: !!privateKey,
-      publicKey: publicKey?.substring(0, 10) + '...',
+      userAddress: userAddress?.substring(0, 10) + '...',
+      hasUserSignature: !!userSignature,
       apiKeyPrefix: apiKey?.substring(0, 8) + '...'
     })
 
@@ -138,23 +141,38 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const signedMessage = await signAuthMessage(privateKey)
-    console.log('Auth successful, JWT token received')
+    const signedMessage = await getAuthMessageAndSign(userAddress, userSignature)
+    console.log('Auth successful, signed message received')
     console.log('Upload parameters:', {
       tempPath,
       apiKeyLength: apiKey.length,
-      publicKey,
-      hasJWT: !!signedMessage
+      userAddress,
+      hasSignedMessage: !!signedMessage
     })
     
-    const response = await lighthouse.uploadEncrypted(
+    // Try different parameter order based on lighthouse docs
+    console.log('Attempting upload with parameters:', {
       tempPath,
-      apiKey,
-      publicKey,
-      signedMessage
-    )
+      userAddress,
+      apiKey: apiKey.substring(0, 8) + '...',
+      signedMessage: signedMessage.substring(0, 10) + '...'
+    })
     
-    console.log('Upload response:', response)
+    let response;
+    try {
+      response = await lighthouse.uploadEncrypted(
+        tempPath,
+        apiKey,
+        userAddress,
+        signedMessage
+      )
+      console.log('Upload response:', response)
+    } catch (uploadError) {
+      console.error('Detailed upload error:', uploadError)
+      console.error('Error message:', uploadError instanceof Error ? uploadError.message : String(uploadError))
+      console.error('Error stack:', uploadError instanceof Error ? uploadError.stack : 'No stack trace')
+      throw new Error(`Lighthouse upload failed: ${uploadError instanceof Error ? uploadError.message : String(uploadError)}`)
+    }
 
     // Include tempPath in response for debugging
     return NextResponse.json({
@@ -177,8 +195,17 @@ export async function POST(request: NextRequest) {
 // PUT: Apply access conditions to encrypted file
 export async function PUT(request: NextRequest) {
   try {
-    const formData = await request.formData()
-    const cid = formData.get('cid') as string | null
+    const body = await request.json()
+    const cid = body.cid as string | null
+    const userAddress = body.userAddress as string | null
+    const signedMessage = body.signedMessage as string | null
+
+    console.log('PUT request received:', { 
+      cid, 
+      userAddress, 
+      hasSignedMessage: !!signedMessage,
+      signedMessageLength: signedMessage?.length 
+    })
 
     if (!cid) {
       return NextResponse.json(
@@ -187,32 +214,50 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Get private key and public key from environment variables
-    const privateKey = process.env.WALLET_PRIVATE_KEY
-    const publicKey = process.env.WALLET_PUBLIC_KEY
-
-    if (!privateKey || !publicKey) {
+    if (!userAddress) {
       return NextResponse.json(
-        { error: 'WALLET_PRIVATE_KEY and WALLET_PUBLIC_KEY must be set in environment variables' },
-        { status: 500 }
+        { error: 'User address is required' },
+        { status: 400 }
       )
     }
 
-    // Debug logging
-    console.log('Applying conditions with:', {
-      cid: cid,
-      publicKey: publicKey,
-      privateKeyConfigured: !!privateKey
-    })
+    if (!signedMessage) {
+      return NextResponse.json(
+        { error: 'Signed message is required' },
+        { status: 400 }
+      )
+    }
 
-    // Apply access conditions using the official code
-    const response = await accessControl(cid, publicKey, privateKey)
+    // Validate inputs are not empty or just whitespace
+    if (!cid.trim() || !userAddress.trim() || !signedMessage.trim()) {
+      return NextResponse.json(
+        { error: 'CID, user address, and signed message cannot be empty' },
+        { status: 400 }
+      )
+    }
+
+    console.log('Validated inputs, calling accessControl...')
+
+    // Apply access conditions using the exact approach from working example
+    let response;
+    try {
+      response = await accessControl(cid, userAddress, signedMessage)
+      console.log('AccessControl returned:', response)
+    } catch (accessError) {
+      console.error('AccessControl failed:', accessError)
+      console.error('AccessControl error type:', typeof accessError)
+      console.error('AccessControl error message:', accessError instanceof Error ? accessError.message : String(accessError))
+      
+      // Provide more specific error message
+      const errorMsg = accessError instanceof Error ? accessError.message : String(accessError)
+      throw new Error(`Access control failed: ${errorMsg}`)
+    }
 
     return NextResponse.json({
       success: true,
       response: response,
       cid: cid,
-      publicKey: publicKey,
+      userAddress: userAddress,
       conditions: [
         {
           id: 1,
@@ -312,16 +357,13 @@ const detectFileType = (buffer: Buffer): { extension: string; mimeType: string }
   return { extension: fileExtension, mimeType: mimeType };
 }
 
-// For getting encryption key - following docs exactly
-const signAuthMessageForEncryption = async (privateKey: string) => {
-  const signer = new ethers.Wallet(privateKey)
-  const authResponse = await lighthouse.getAuthMessage(signer.address)
+// For getting encryption key - using user wallet signature
+const signAuthMessageForEncryption = async (userAddress: string, userSignature: string) => {
+  const authResponse = await lighthouse.getAuthMessage(userAddress)
   if (!authResponse || !authResponse.data || !authResponse.data.message) {
     throw new Error('Failed to get auth message from lighthouse')
   }
-  const messageRequested = authResponse.data.message
-  const signedMessage = await signer.signMessage(messageRequested)
-  return signedMessage
+  return userSignature
 }
 
 // PATCH: Decrypt file (get signed message -> get encryption key -> attempt decrypt)
@@ -330,27 +372,26 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json();
     const cid = body.cid as string | undefined;
     const fileName = body.fileName as string | undefined;
+    const userAddress = body.userAddress as string | undefined;
+    const userSignature = body.userSignature as string | undefined;
 
     if (!cid) {
       return NextResponse.json({ error: 'CID is required' }, { status: 400 });
     }
 
-    const privateKey = process.env.WALLET_PRIVATE_KEY;
-    const publicKey = process.env.WALLET_PUBLIC_KEY;
-
-    if (!privateKey || !publicKey) {
-      return NextResponse.json({ error: 'WALLET_PRIVATE_KEY and WALLET_PUBLIC_KEY must be set' }, { status: 500 });
+    if (!userAddress || !userSignature) {
+      return NextResponse.json({ error: 'User address and signature are required' }, { status: 400 });
     }
 
     // Sign auth message following the docs exactly
-    const signedMessage = await signAuthMessageForEncryption(privateKey);
+    const signedMessage = await signAuthMessageForEncryption(userAddress, userSignature);
 
-    // Get encryption key following docs: fetchEncryptionKey(cid, publicKey, signedMessage)
+    // Get encryption key following docs: fetchEncryptionKey(cid, userAddress, signedMessage)
     let encryptionKeyResponse: any = null;
     try {
       encryptionKeyResponse = await lighthouse.fetchEncryptionKey(
         cid,
-        publicKey,
+        userAddress,
         signedMessage
       );
       console.log('Encryption key response:', encryptionKeyResponse);

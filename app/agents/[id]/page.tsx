@@ -1,10 +1,11 @@
 'use client';
 
-import { Star, TrendingUp, ArrowLeft, MessageCircle, DollarSign } from 'lucide-react';
+import { Star, TrendingUp, ArrowLeft, MessageCircle, DollarSign, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState, useEffect, useId, useRef } from 'react';
 import SubscribeModal from '@/components/agents/SubscribeModal';
+import VaultBridgeModal from '@/components/vault/VaultBridgeModal';
 import { InitNexusOnConnect } from '@/components/nexus/InitNexusOnConnect';
 import CountUp from '@/components/ui/count-up';
 
@@ -380,6 +381,7 @@ export default function AgentDetailsPage() {
   const params = useParams();
   const agentId = params.id as string;
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+  const [showVaultModal, setShowVaultModal] = useState(false);
   const [decrypting, setDecrypting] = useState(false);
   const [decryptedFileUrl, setDecryptedFileUrl] = useState<string | null>(null);
   const [decryptedFileName, setDecryptedFileName] = useState<string | null>(null);
@@ -390,6 +392,36 @@ export default function AgentDetailsPage() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [statsBottom, setStatsBottom] = useState(0);
   const statsRef = useRef<HTMLDivElement>(null);
+  const [hasSubscribed, setHasSubscribed] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [transactionHash, setTransactionHash] = useState<string | null>(null);
+
+  // Check if user has already subscribed (from sessionStorage - clears on restart)
+  useEffect(() => {
+    const subscriptionKey = `subscribed_${agentId}`;
+    const isSubscribed = sessionStorage.getItem(subscriptionKey) === 'true';
+    setHasSubscribed(isSubscribed);
+  }, [agentId]);
+
+  // Handle successful subscription
+  const handleSubscriptionSuccess = (txHash?: string) => {
+    const subscriptionKey = `subscribed_${agentId}`;
+    sessionStorage.setItem(subscriptionKey, 'true');
+    setHasSubscribed(true);
+    setShowVaultModal(false); // Close the modal
+    
+    // Store transaction hash
+    if (txHash) {
+      setTransactionHash(txHash);
+    }
+    
+    // Show success toast
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 5000); // Hide after 5 seconds
+    
+    // Optional: Show success message
+    console.log('🎉 Successfully subscribed to agent!');
+  };
 
   // Track scroll position and direction for animations
   useEffect(() => {
@@ -692,51 +724,72 @@ export default function AgentDetailsPage() {
 
             <div className="space-y-3">
               <Link
-                href={`/chat?agent=${agent.id}`}
-                className="w-full px-6 py-3 rounded-md transition-all duration-300 flex items-center justify-center gap-2 text-sm font-medium relative overflow-hidden group"
+                href="/chat"
+                className={`w-full px-6 py-3 rounded-md transition-all duration-300 flex items-center justify-center gap-2 text-sm font-medium relative overflow-hidden group ${
+                  !hasSubscribed ? 'cursor-not-allowed opacity-50' : ''
+                }`}
                 style={{
-                  backgroundColor: '#f8ede0',
-                  color: '#161823',
+                  backgroundColor: hasSubscribed ? '#f8ede0' : '#5d606c',
+                  color: hasSubscribed ? '#161823' : '#9ca3af',
+                  pointerEvents: hasSubscribed ? 'auto' : 'none',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 25px rgba(248, 237, 224, 0.5), 0 10px 30px rgba(248, 237, 224, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)';
+                  if (hasSubscribed) {
+                    e.currentTarget.style.boxShadow = '0 0 25px rgba(248, 237, 224, 0.5), 0 10px 30px rgba(248, 237, 224, 0.3)';
+                    e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)';
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = 'none';
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  if (hasSubscribed) {
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  }
+                }}
+                onClick={(e) => {
+                  if (!hasSubscribed) {
+                    e.preventDefault();
+                  }
                 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 group-hover:animate-shimmer transition-opacity duration-500" 
-                  style={{ transform: 'translateX(-100%)', animation: 'shimmer 2s infinite' }} 
-                />
-                <MessageCircle className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
-                Start Chat
+                {hasSubscribed && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 group-hover:animate-shimmer transition-opacity duration-500" 
+                    style={{ transform: 'translateX(-100%)', animation: 'shimmer 2s infinite' }} 
+                  />
+                )}
+                <MessageCircle className={`w-4 h-4 ${hasSubscribed ? 'group-hover:rotate-12' : ''} transition-transform duration-300`} />
+                {hasSubscribed ? 'Start Chat' : 'Subscribe to Chat'}
               </Link>
               
               <button
-                onClick={() => setShowSubscribeModal(true)}
+                onClick={() => setShowVaultModal(true)}
+                disabled={hasSubscribed}
                 className="w-full px-6 py-3 rounded-md transition-all duration-300 flex items-center justify-center gap-2 text-sm font-medium relative overflow-hidden group"
                 style={{
-                  backgroundColor: 'transparent',
-                  border: '1px solid #5d606c',
-                  color: '#f8ede0',
+                  backgroundColor: hasSubscribed ? '#10b981' : 'transparent',
+                  border: hasSubscribed ? '1px solid #10b981' : '1px solid #5d606c',
+                  color: hasSubscribed ? '#fff' : '#f8ede0',
+                  cursor: hasSubscribed ? 'not-allowed' : 'pointer',
+                  opacity: hasSubscribed ? 0.8 : 1,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#f8ede0';
-                  e.currentTarget.style.backgroundColor = 'rgba(93, 96, 108, 0.3)';
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(248, 237, 224, 0.2)';
-                  e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)';
+                  if (!hasSubscribed) {
+                    e.currentTarget.style.borderColor = '#f8ede0';
+                    e.currentTarget.style.backgroundColor = 'rgba(93, 96, 108, 0.3)';
+                    e.currentTarget.style.boxShadow = '0 0 20px rgba(248, 237, 224, 0.2)';
+                    e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)';
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#5d606c';
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.boxShadow = 'none';
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  if (!hasSubscribed) {
+                    e.currentTarget.style.borderColor = '#5d606c';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  }
                 }}
               >
-                <DollarSign className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
-                Subscribe
+                <DollarSign className={`w-4 h-4 ${!hasSubscribed ? 'group-hover:rotate-180' : ''} transition-transform duration-500`} />
+                {hasSubscribed ? '✓ Subscribed' : 'Subscribe'}
               </button>
               {/* Decrypt button - calls server to get signed message, encryption key and attempt decrypt */}
               <button
@@ -843,6 +896,64 @@ export default function AgentDetailsPage() {
         agentName={agent.name}
         subscriptionPrice={agent.price}
       />
+
+      {/* Vault Bridge Modal */}
+      <VaultBridgeModal
+        isOpen={showVaultModal}
+        onClose={() => setShowVaultModal(false)}
+        onSubscriptionSuccess={handleSubscriptionSuccess}
+      />
+
+      {/* Success Toast Notification */}
+      {showSuccessToast && (
+        <div 
+          className="fixed bottom-8 right-8 z-50 px-6 py-4 rounded-xl animate-slide-up shadow-2xl max-w-md"
+          style={{
+            backgroundColor: '#10b981',
+            color: '#fff',
+            boxShadow: '0 10px 40px rgba(16, 185, 129, 0.3)',
+          }}
+        >
+          <div className="flex items-start gap-3">
+            <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <div className="font-semibold mb-1">Subscription Successful!</div>
+              <div className="text-sm opacity-90 mb-2">You can now start chatting with the agent</div>
+              {transactionHash && (
+                <a
+                  href={`https://sepolia.etherscan.io/tx/${transactionHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-white text-green-600 font-medium hover:bg-opacity-90 transition-all"
+                >
+                  View on Etherscan →
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Animation CSS */}
+      <style jsx global>{`
+        @keyframes slide-up {
+          from {
+            transform: translateY(100px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        .animate-slide-up {
+          animation: slide-up 0.5s ease-out;
+        }
+      `}</style>
     </div>
   );
 }
