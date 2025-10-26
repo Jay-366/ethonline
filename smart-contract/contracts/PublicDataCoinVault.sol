@@ -10,7 +10,6 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
  * @notice This contract allows anyone to deposit and withdraw their own tokens
  */
 contract PublicDataCoinVault is ReentrancyGuard {
-    
     // Events for transparency and monitoring
     event TokensWithdrawn(
         address indexed token,
@@ -18,13 +17,13 @@ contract PublicDataCoinVault is ReentrancyGuard {
         uint256 amount,
         address indexed withdrawer
     );
-    
+
     event TokensDeposited(
         address indexed token,
         address indexed depositor,
         uint256 amount
     );
-    
+
     event EmergencyWithdrawal(
         address indexed token,
         address indexed recipient,
@@ -33,7 +32,7 @@ contract PublicDataCoinVault is ReentrancyGuard {
 
     // Mapping to track total deposits for each token (optional analytics)
     mapping(address => uint256) public totalDeposited;
-    
+
     // Array to keep track of all tokens that have been deposited
     address[] public depositedTokens;
     mapping(address => bool) public hasBeenDeposited;
@@ -48,7 +47,7 @@ contract PublicDataCoinVault is ReentrancyGuard {
      * @param tokenAddress The address of the ERC20 token to withdraw
      * @param recipient The address that will receive the tokens
      * @param amount The amount of tokens to withdraw
-     * 
+     *
      * Requirements:
      * - Anyone can call this function
      * - Token address cannot be zero address
@@ -61,19 +60,31 @@ contract PublicDataCoinVault is ReentrancyGuard {
         address recipient,
         uint256 amount
     ) external nonReentrant {
-        require(tokenAddress != address(0), "PublicDataCoinVault: Token address cannot be zero");
-        require(recipient != address(0), "PublicDataCoinVault: Recipient address cannot be zero");
-        require(amount > 0, "PublicDataCoinVault: Amount must be greater than zero");
-        
+        require(
+            tokenAddress != address(0),
+            "PublicDataCoinVault: Token address cannot be zero"
+        );
+        require(
+            recipient != address(0),
+            "PublicDataCoinVault: Recipient address cannot be zero"
+        );
+        require(
+            amount > 0,
+            "PublicDataCoinVault: Amount must be greater than zero"
+        );
+
         IERC20 token = IERC20(tokenAddress);
         uint256 vaultBalance = token.balanceOf(address(this));
-        
-        require(vaultBalance >= amount, "PublicDataCoinVault: Insufficient vault balance");
-        
+
+        require(
+            vaultBalance >= amount,
+            "PublicDataCoinVault: Insufficient vault balance"
+        );
+
         // Transfer tokens to recipient
         bool success = token.transfer(recipient, amount);
         require(success, "PublicDataCoinVault: Token transfer failed");
-        
+
         emit TokensWithdrawn(tokenAddress, recipient, amount, msg.sender);
     }
 
@@ -82,9 +93,14 @@ contract PublicDataCoinVault is ReentrancyGuard {
      * @param tokenAddress The address of the ERC20 token to check
      * @return The current balance of the specified token in the vault
      */
-    function getVaultBalance(address tokenAddress) external view returns (uint256) {
-        require(tokenAddress != address(0), "PublicDataCoinVault: Token address cannot be zero");
-        
+    function getVaultBalance(
+        address tokenAddress
+    ) external view returns (uint256) {
+        require(
+            tokenAddress != address(0),
+            "PublicDataCoinVault: Token address cannot be zero"
+        );
+
         IERC20 token = IERC20(tokenAddress);
         return token.balanceOf(address(this));
     }
@@ -94,20 +110,18 @@ contract PublicDataCoinVault is ReentrancyGuard {
      * @param tokenAddresses Array of token addresses to check
      * @return balances Array of balances corresponding to the token addresses
      */
-    function getMultipleVaultBalances(address[] calldata tokenAddresses) 
-        external 
-        view 
-        returns (uint256[] memory balances) 
-    {
+    function getMultipleVaultBalances(
+        address[] calldata tokenAddresses
+    ) external view returns (uint256[] memory balances) {
         balances = new uint256[](tokenAddresses.length);
-        
+
         for (uint256 i = 0; i < tokenAddresses.length; i++) {
             if (tokenAddresses[i] != address(0)) {
                 IERC20 token = IERC20(tokenAddresses[i]);
                 balances[i] = token.balanceOf(address(this));
             }
         }
-        
+
         return balances;
     }
 
@@ -115,24 +129,33 @@ contract PublicDataCoinVault is ReentrancyGuard {
      * @dev Emergency function to withdraw all tokens of a specific type
      * @param tokenAddress The address of the ERC20 token to withdraw completely
      * @param recipient The address that will receive all the tokens
-     * 
+     *
      * @notice Anyone can call this function to withdraw all tokens
      */
     function emergencyWithdrawAll(
         address tokenAddress,
         address recipient
     ) external nonReentrant {
-        require(tokenAddress != address(0), "PublicDataCoinVault: Token address cannot be zero");
-        require(recipient != address(0), "PublicDataCoinVault: Recipient address cannot be zero");
-        
+        require(
+            tokenAddress != address(0),
+            "PublicDataCoinVault: Token address cannot be zero"
+        );
+        require(
+            recipient != address(0),
+            "PublicDataCoinVault: Recipient address cannot be zero"
+        );
+
         IERC20 token = IERC20(tokenAddress);
         uint256 entireBalance = token.balanceOf(address(this));
-        
-        require(entireBalance > 0, "PublicDataCoinVault: No tokens to withdraw");
-        
+
+        require(
+            entireBalance > 0,
+            "PublicDataCoinVault: No tokens to withdraw"
+        );
+
         bool success = token.transfer(recipient, entireBalance);
         require(success, "PublicDataCoinVault: Emergency withdrawal failed");
-        
+
         emit EmergencyWithdrawal(tokenAddress, recipient, entireBalance);
     }
 
@@ -153,7 +176,7 @@ contract PublicDataCoinVault is ReentrancyGuard {
             depositedTokens.push(tokenAddress);
             hasBeenDeposited[tokenAddress] = true;
         }
-        
+
         totalDeposited[tokenAddress] += amount;
         emit TokensDeposited(tokenAddress, msg.sender, amount);
     }
@@ -161,16 +184,19 @@ contract PublicDataCoinVault is ReentrancyGuard {
     /**
      * @dev Function to manually track deposits (for tokens sent directly to contract)
      * @param tokenAddress The address of the token to track
-     * 
+     *
      * @notice Anyone can call this function to update deposit tracking
      */
     function trackManualDeposit(address tokenAddress) external {
-        require(tokenAddress != address(0), "PublicDataCoinVault: Token address cannot be zero");
-        
+        require(
+            tokenAddress != address(0),
+            "PublicDataCoinVault: Token address cannot be zero"
+        );
+
         IERC20 token = IERC20(tokenAddress);
         uint256 currentBalance = token.balanceOf(address(this));
         uint256 previousTotal = totalDeposited[tokenAddress];
-        
+
         if (currentBalance > previousTotal) {
             uint256 newDeposit = currentBalance - previousTotal;
             _trackDeposit(tokenAddress, newDeposit);
@@ -182,7 +208,9 @@ contract PublicDataCoinVault is ReentrancyGuard {
      * @param tokenAddress The address of the token to check
      * @return The total amount deposited for this token
      */
-    function getTotalDeposited(address tokenAddress) external view returns (uint256) {
+    function getTotalDeposited(
+        address tokenAddress
+    ) external view returns (uint256) {
         return totalDeposited[tokenAddress];
     }
 
@@ -200,22 +228,28 @@ contract PublicDataCoinVault is ReentrancyGuard {
      * @dev Deposit tokens into the vault
      * @param tokenAddress The address of the ERC20 token to deposit
      * @param amount The amount of tokens to deposit
-     * 
+     *
      * @notice Caller must have approved this contract to spend tokens
      */
     function depositTokens(
         address tokenAddress,
         uint256 amount
     ) external nonReentrant {
-        require(tokenAddress != address(0), "PublicDataCoinVault: Token address cannot be zero");
-        require(amount > 0, "PublicDataCoinVault: Amount must be greater than zero");
-        
+        require(
+            tokenAddress != address(0),
+            "PublicDataCoinVault: Token address cannot be zero"
+        );
+        require(
+            amount > 0,
+            "PublicDataCoinVault: Amount must be greater than zero"
+        );
+
         IERC20 token = IERC20(tokenAddress);
-        
+
         // Transfer tokens from sender to vault
         bool success = token.transferFrom(msg.sender, address(this), amount);
         require(success, "PublicDataCoinVault: Token transfer failed");
-        
+
         // Track the deposit
         _trackDeposit(tokenAddress, amount);
     }

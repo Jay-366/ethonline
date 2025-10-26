@@ -7,18 +7,22 @@ This folder contains the integration code for using Avail Nexus's Bridge & Execu
 ## Files
 
 ### 1. `testBridgeAndExecuteVault.ts`
+
 Original test implementation following official Nexus docs. This demonstrates the complete flow with detailed logging.
 
 ### 2. `useBridgeAndExecuteVault.ts`
+
 React hook that wraps the bridge and execute functionality for easy use in components.
 
 **Features:**
+
 - Simulate bridge & execute transactions
 - Execute bridge & execute transactions
 - Loading states and error handling
 - TypeScript type safety
 
 **Usage:**
+
 ```typescript
 import { useBridgeAndExecuteVault } from '@/hooks/nexus/useBridgeAndExecuteVault';
 
@@ -53,11 +57,13 @@ function MyComponent() {
 ## Smart Contract Details
 
 ### PublicDataCoinVault
+
 - **Address:** `0xc526E6dC5ED1BAA9dBd1476E328e987387927e9f`
 - **Network:** Sepolia Testnet
 - **Chain ID:** 11155111
 
 ### FormDataCoin (Token in Vault)
+
 - **Address:** `0x0b782612ff5e4E012485F85a80c5427C8A59A899`
 - **Network:** Sepolia Testnet
 - **Current Balance:** 2.0 tokens
@@ -90,12 +96,14 @@ function withdrawTokens(
 ## Testing
 
 ### Check Vault Balance
+
 ```bash
 cd smart-contract
 npm run check:publicvault
 ```
 
 ### Test Bridge & Execute
+
 1. Navigate to `/vault` page in the app
 2. Connect your wallet
 3. Enter amount (e.g., 1 USDC)
@@ -105,9 +113,11 @@ npm run check:publicvault
 ## Components
 
 ### VaultWithdrawCard
+
 UI component located at `/components/vault/VaultWithdrawCard.tsx`
 
 Features:
+
 - Amount input
 - Simulate button with results
 - Execute button with transaction hash
@@ -115,6 +125,7 @@ Features:
 - Reset functionality
 
 ### Vault Page
+
 Full page implementation at `/app/vault/page.tsx`
 
 Accessible at: `http://localhost:3000/vault`
@@ -133,6 +144,7 @@ The hook automatically handles token approval if needed. The simulation will ind
 ## Error Handling
 
 The hook provides comprehensive error handling:
+
 - SDK not initialized
 - Wallet not connected
 - Insufficient balance
