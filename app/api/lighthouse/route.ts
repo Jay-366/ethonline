@@ -359,11 +359,10 @@ const detectFileType = (buffer: Buffer): { extension: string; mimeType: string }
 
 // For getting encryption key - using user wallet signature
 const signAuthMessageForEncryption = async (userAddress: string, userSignature: string) => {
-  const authResponse = await lighthouse.getAuthMessage(userAddress)
-  if (!authResponse || !authResponse.data || !authResponse.data.message) {
-    throw new Error('Failed to get auth message from lighthouse')
-  }
-  return userSignature
+  // We don't need to get auth message again - the signature was already created for the correct message
+  // Just return the signature that was passed in
+  console.log('Using user signature for decryption:', userSignature.substring(0, 20) + '...');
+  return userSignature;
 }
 
 // PATCH: Decrypt file (get signed message -> get encryption key -> attempt decrypt)
@@ -389,6 +388,8 @@ export async function PATCH(request: NextRequest) {
     // Get encryption key following docs: fetchEncryptionKey(cid, userAddress, signedMessage)
     let encryptionKeyResponse: any = null;
     try {
+      console.log('Fetching encryption key with:', { cid, userAddress: userAddress.substring(0, 10) + '...', signedMessageLength: signedMessage.length });
+      
       encryptionKeyResponse = await lighthouse.fetchEncryptionKey(
         cid,
         userAddress,
@@ -396,8 +397,33 @@ export async function PATCH(request: NextRequest) {
       );
       console.log('Encryption key response:', encryptionKeyResponse);
     } catch (err) {
-      console.error('Failed to get encryption key:', err);
-      return NextResponse.json({ error: 'Failed to get encryption key', detail: err instanceof Error ? err.message : String(err) }, { status: 500 });
+      console.error('Failed to get encryption key - Full error:', err);
+      console.error('Error details:', {
+        message: err instanceof Error ? err.message : String(err),
+        type: typeof err,
+        cid,
+        userAddress
+      });
+      
+      // Check if it's an access condition error
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      if (errorMsg.includes('access') || errorMsg.includes('condition') || errorMsg.includes('denied')) {
+        return NextResponse.json({ 
+          error: 'Access denied. You must own at least 0.5 FormDataCoin tokens on Sepolia to decrypt this file.',
+          detail: errorMsg,
+          accessConditions: {
+            chain: 'sepolia',
+            tokenContract: '0x0b782612ff5e4E012485F85a80c5427C8A59A899',
+            minimumBalance: '0.5 FormDataCoin'
+          }
+        }, { status: 403 });
+      }
+      
+      return NextResponse.json({ 
+        error: 'Failed to get encryption key', 
+        detail: errorMsg,
+        hint: 'Make sure you have subscribed to this agent first (requires 0.5 FormDataCoin tokens on Sepolia)'
+      }, { status: 500 });
     }
 
     // Extract the actual key from response.data.key

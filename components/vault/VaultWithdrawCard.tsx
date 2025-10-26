@@ -50,11 +50,21 @@ export default function VaultWithdrawCard({ onSubscriptionSuccess }: VaultWithdr
     
     const result = await execute(amount);
     
+    console.log('📦 Execute result:', result);
+    
     // If execution was successful, call the success callback with transaction hash
     if (result && result.success && onSubscriptionSuccess) {
       console.log('✅ Subscription successful! Calling success callback...');
       const txHash = result.executeTransactionHash || result.bridgeTransactionHash;
+      console.log('🔗 Transaction hash:', txHash);
+      console.log('📋 Full result object:', JSON.stringify(result, null, 2));
       onSubscriptionSuccess(txHash);
+    } else {
+      console.log('❌ Result check failed:', {
+        hasResult: !!result,
+        success: result?.success,
+        hasCallback: !!onSubscriptionSuccess
+      });
     }
   };
 

@@ -8,6 +8,8 @@ import SubscribeModal from '@/components/agents/SubscribeModal';
 import VaultBridgeModal from '@/components/vault/VaultBridgeModal';
 import { InitNexusOnConnect } from '@/components/nexus/InitNexusOnConnect';
 import CountUp from '@/components/ui/count-up';
+import { useAccount } from 'wagmi';
+import lighthouse from '@lighthouse-web3/sdk';
 
 // Grid Pattern Component from feature-section-with-card-gradient
 const Grid = ({
@@ -99,13 +101,13 @@ const AGENTS_DATA: Record<string, {
   totalQueries: string;
   successRate: string;
 }> = {
-  "bafybeibdofc5fnwiuvrzpr3ozu5x3ufccqme24ho4tbhn3e2xg4blrvo6i": {
-    id: "bafybeibdofc5fnwiuvrzpr3ozu5x3ufccqme24ho4tbhn3e2xg4blrvo6i",
+  "bafybeidvv4y7gqpbrxlsmrueldzxipwkfz3v6xmtwpis4lu44feeggtyjm": {
+    id: "bafybeidvv4y7gqpbrxlsmrueldzxipwkfz3v6xmtwpis4lu44feeggtyjm",
     name: 'Crypto Agent',
     category: 'Agent',
     rating: 4.3,
     reviews: 2236,
-    price: '10 USDC/Sub',
+    price: '3 USDC/Sub',
     description: "I'm providing advanced cryptocurrency analysis and trading strategies quickly and professionally. I'll be happy to help you with your crypto trading.",
     longDescription: 'Crypto Agent providing advanced cryptocurrency analysis and trading strategies quickly and professionally ,agents represent the next generation of customer service automation. Built on advanced natural language processing, these agents can understand context, sentiment, and intent to provide personalized support across chat, email, and social media platforms. The system learns from each interaction to continuously improve response quality and customer satisfaction.',
     trending: true,
@@ -380,6 +382,7 @@ const AGENTS_DATA: Record<string, {
 export default function AgentDetailsPage() {
   const params = useParams();
   const agentId = params.id as string;
+  const { address, connector } = useAccount();
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
   const [showVaultModal, setShowVaultModal] = useState(false);
   const [decrypting, setDecrypting] = useState(false);
@@ -396,15 +399,27 @@ export default function AgentDetailsPage() {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
 
-  // Check if user has already subscribed (from sessionStorage - clears on restart)
+  // Check if user has already subscribed (from sessionStorage - clears on refresh)
   useEffect(() => {
     const subscriptionKey = `subscribed_${agentId}`;
-    const isSubscribed = sessionStorage.getItem(subscriptionKey) === 'true';
-    setHasSubscribed(isSubscribed);
+    
+    // Detect if page was refreshed (F5, Ctrl+R, or browser refresh button)
+    const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+    if (navigation && navigation.type === 'reload') {
+      // Page was refreshed - clear subscription state
+      sessionStorage.removeItem(subscriptionKey);
+      setHasSubscribed(false);
+    } else {
+      // Normal navigation - check subscription state
+      const isSubscribed = sessionStorage.getItem(subscriptionKey) === 'true';
+      setHasSubscribed(isSubscribed);
+    }
   }, [agentId]);
 
   // Handle successful subscription
   const handleSubscriptionSuccess = (txHash?: string) => {
+    console.log('🎯 handleSubscriptionSuccess called with txHash:', txHash);
+    
     const subscriptionKey = `subscribed_${agentId}`;
     sessionStorage.setItem(subscriptionKey, 'true');
     setHasSubscribed(true);
@@ -412,15 +427,21 @@ export default function AgentDetailsPage() {
     
     // Store transaction hash
     if (txHash) {
+      console.log('💾 Storing transaction hash:', txHash);
       setTransactionHash(txHash);
+    } else {
+      console.warn('⚠️ No transaction hash provided to handleSubscriptionSuccess');
     }
     
     // Show success toast
     setShowSuccessToast(true);
-    setTimeout(() => setShowSuccessToast(false), 5000); // Hide after 5 seconds
+    setTimeout(() => {
+      setShowSuccessToast(false);
+      setTransactionHash(null); // Clear hash when toast disappears
+    }, 8000); // Hide after 8 seconds
     
     // Optional: Show success message
-    console.log('🎉 Successfully subscribed to agent!');
+    console.log('🎉 Successfully subscribed to agent!', { txHash, hasTransactionHash: !!txHash });
   };
 
   // Track scroll position and direction for animations
@@ -795,19 +816,70 @@ export default function AgentDetailsPage() {
               <button
                 onClick={async () => {
                   // prevent double actions
-                  if (decrypting) return;
+                  if (decrypting || !hasSubscribed) return;
+                  
+                  // Check if wallet is connected
+                  if (!address || !connector) {
+                    setDecryptError('Please connect your wallet first');
+                    return;
+                  }
+                  
                   setDecryptError(null);
                   setDecrypting(true);
+                  
                   try {
+                    console.log('🔐 Starting decrypt process...');
+                    console.log('User address:', address);
+                    
+                    // Get auth message and sign it
+                    const authResponse = await lighthouse.getAuthMessage(address);
+                    if (!authResponse || !authResponse.data || !authResponse.data.message) {
+                      throw new Error('Failed to get auth message from Lighthouse');
+                    }
+                    
+                    console.log('📝 Auth message received, requesting signature...');
+                    
+                    // Request signature from user's wallet
+                    const provider = await connector.getProvider();
+                    if (!provider || !provider.request) {
+                      throw new Error('Wallet provider not available');
+                    }
+                    
+                    const userSignature = await provider.request({
+                      method: 'personal_sign',
+                      params: [authResponse.data.message, address],
+                    }) as string;
+                    
+                    console.log('✍️ Signature obtained, calling decrypt API...');
+                    
+                    // Call decrypt API with user address and signature
                     const res = await fetch('/api/lighthouse', {
                       method: 'PATCH',
                       headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ cid: String(agent.id), fileName: `${agent.name}.bin` }),
+                      body: JSON.stringify({ 
+                        cid: String(agent.id), 
+                        fileName: `${agent.name}.bin`,
+                        userAddress: address,
+                        userSignature: userSignature
+                      }),
                     });
+                    
                     const data = await res.json();
-                    if (!res.ok) throw new Error(data?.error || 'Decrypt request failed');
+                    console.log('Decrypt API response:', data);
+                    
+                    if (!res.ok) {
+                      // Provide more helpful error messages
+                      let errorMsg = data?.error || 'Decrypt request failed';
+                      
+                      if (errorMsg.includes('Failed to get encryption key')) {
+                        errorMsg = 'Access denied. You need at least 0.5 FormDataCoin tokens on Sepolia to decrypt this file. Subscribe to the agent first!';
+                      }
+                      
+                      throw new Error(errorMsg);
+                    }
 
                     if (data.fileBase64) {
+                      console.log('✅ File decrypted successfully!');
                       // convert base64 to blob and create object URL
                       const b64 = data.fileBase64 as string;
                       const binary = atob(b64);
@@ -816,7 +888,7 @@ export default function AgentDetailsPage() {
                       for (let i = 0; i < len; i++) {
                         bytes[i] = binary.charCodeAt(i);
                       }
-                      const blob = new Blob([bytes], { type: 'application/octet-stream' });
+                      const blob = new Blob([bytes], { type: data.mimeType || 'application/octet-stream' });
                       const url = URL.createObjectURL(blob);
                       setDecryptedFileUrl(url);
                       setDecryptedFileName(data.fileName || `${agent.name}.bin`);
@@ -829,18 +901,38 @@ export default function AgentDetailsPage() {
                       setDecryptError('Decrypt endpoint returned no file and no key.');
                     }
                   } catch (err: any) {
+                    console.error('❌ Decrypt error:', err);
                     setDecryptError(err?.message || String(err));
                   } finally {
                     setDecrypting(false);
                   }
                 }}
-                className="w-full mt-2 px-6 py-3 rounded-md transition-all duration-300 flex items-center justify-center gap-2 text-sm font-medium relative overflow-hidden group"
+                disabled={!hasSubscribed || !address || decrypting}
+                className={`w-full mt-2 px-6 py-3 rounded-md transition-all duration-300 flex items-center justify-center gap-2 text-sm font-medium relative overflow-hidden group ${
+                  !hasSubscribed ? 'cursor-not-allowed opacity-50' : ''
+                }`}
                 style={{
-                  backgroundColor: 'transparent',
-                  border: '1px solid #5d606c',
-                  color: '#f8ede0',
+                  backgroundColor: hasSubscribed ? 'transparent' : '#5d606c',
+                  border: hasSubscribed ? '1px solid #5d606c' : '1px solid #5d606c',
+                  color: hasSubscribed ? '#f8ede0' : '#9ca3af',
                 }}
-                title="Decrypt file"
+                onMouseEnter={(e) => {
+                  if (hasSubscribed && !decrypting) {
+                    e.currentTarget.style.borderColor = '#f8ede0';
+                    e.currentTarget.style.backgroundColor = 'rgba(93, 96, 108, 0.3)';
+                    e.currentTarget.style.boxShadow = '0 0 20px rgba(248, 237, 224, 0.2)';
+                    e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (hasSubscribed && !decrypting) {
+                    e.currentTarget.style.borderColor = '#5d606c';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  }
+                }}
+                title={!hasSubscribed ? "Subscribe to decrypt" : !address ? "Connect wallet first" : "Decrypt file"}
               >
                 {decrypting ? (
                   <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24">
@@ -850,7 +942,7 @@ export default function AgentDetailsPage() {
                 ) : (
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 )}
-                {decrypting ? 'Decrypting...' : 'Decrypt'}
+                {decrypting ? 'Decrypting...' : !hasSubscribed ? 'Subscribe to Decrypt' : 'Decrypt'}
               </button>
 
               {/* Download button shown when decrypted file is available */}
@@ -904,10 +996,10 @@ export default function AgentDetailsPage() {
         onSubscriptionSuccess={handleSubscriptionSuccess}
       />
 
-      {/* Success Toast Notification */}
+      {/* Success Toast Notification - Top Right */}
       {showSuccessToast && (
         <div 
-          className="fixed bottom-8 right-8 z-50 px-6 py-4 rounded-xl animate-slide-up shadow-2xl max-w-md"
+          className="fixed top-8 right-8 z-50 px-6 py-4 rounded-xl animate-slide-down shadow-2xl max-w-md"
           style={{
             backgroundColor: '#10b981',
             color: '#fff',
@@ -923,7 +1015,7 @@ export default function AgentDetailsPage() {
             <div className="flex-1">
               <div className="font-semibold mb-1">Subscription Successful!</div>
               <div className="text-sm opacity-90 mb-2">You can now start chatting with the agent</div>
-              {transactionHash && (
+              {transactionHash ? (
                 <a
                   href={`https://sepolia.etherscan.io/tx/${transactionHash}`}
                   target="_blank"
@@ -932,6 +1024,8 @@ export default function AgentDetailsPage() {
                 >
                   View on Etherscan →
                 </a>
+              ) : (
+                <div className="text-xs opacity-75">Processing transaction...</div>
               )}
             </div>
           </div>
@@ -940,9 +1034,9 @@ export default function AgentDetailsPage() {
 
       {/* Toast Animation CSS */}
       <style jsx global>{`
-        @keyframes slide-up {
+        @keyframes slide-down {
           from {
-            transform: translateY(100px);
+            transform: translateY(-100px);
             opacity: 0;
           }
           to {
@@ -950,8 +1044,8 @@ export default function AgentDetailsPage() {
             opacity: 1;
           }
         }
-        .animate-slide-up {
-          animation: slide-up 0.5s ease-out;
+        .animate-slide-down {
+          animation: slide-down 0.5s ease-out;
         }
       `}</style>
     </div>

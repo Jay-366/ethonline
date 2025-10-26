@@ -28,7 +28,7 @@ const AGENTS_DATA: Agent[] = [
     category: 'Agent',
     rating: 4.3,
     reviews: 2236,
-    price: 10,
+    price: 3,
     description:  "I'm providing advanced cryptocurrency analysis and trading strategies quickly and professionally. I'll be happy to help you with your crypto trading.",
     trending: true,
   },
