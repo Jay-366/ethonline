@@ -1,5 +1,6 @@
 # Intellitrade  
 ### Decentralized AI Agent Marketplace — Secure, DataCoin-Gated Intelligence  
+Link to Our Website: https://intellitrade-theta.vercel.app/ 
 
 **Intellitrade** is a decentralized **AI Agent Marketplace** that allows developers to encrypt, package, and monetize their AI agents.  
 Users can unlock these agents securely using **DataCoin-based access control**, while **cross-chain payments and settlements** are handled by the **Nexus SDK**.  
